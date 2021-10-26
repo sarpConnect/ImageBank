@@ -1,0 +1,260 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "ADEUNIS - Dry Contacts Divers",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 0,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "Ce nœud renvoie \"failure\" s'il s'agit du premier message reçu par le device. Sinon, il renvoie \"success\".",
+          "layoutX": 51,
+          "layoutY": 262
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Test initialisation",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "xPos",
+            "yPos",
+            "mode",
+            "commentaires",
+            "zoneName",
+            "zoneId",
+            "falseColorA",
+            "falseLabelA",
+            "trueColorA",
+            "trueLabelA",
+            "falseColorB",
+            "falseLabelB",
+            "trueColorB",
+            "trueLabelB",
+            "falseColorC",
+            "falseLabelC",
+            "trueColorC",
+            "trueLabelC",
+            "falseColorD",
+            "falseLabelD",
+            "trueColorD",
+            "trueLabelD",
+            "typeA",
+            "typeB",
+            "typeC",
+            "typeD"
+          ],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 413,
+          "layoutY": 106
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Attributes Init",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var attributesInit = {\n    \"signalValue\": msg.signalValue,\n    \"lowBattery\": msg.lowBattery,\n    \"typeA\": \"\",\n    \"typeB\": \"\",\n    \"typeC\": \"\",\n    \"typeD\": \"\",\n    \"trueColorA\": \"#96bf0b\",\n    \"trueLabelA\": \"ON\",\n    \"falseColorA\": \"#e95e45\",\n    \"falseLabelA\": \"OFF\",\n    \"trueColorB\": \"#96bf0b\",\n    \"trueLabelB\": \"ON\",\n    \"falseColorB\": \"#e95e45\",\n    \"falseLabelB\": \"OFF\",\n    \"trueColorC\": \"#96bf0b\",\n    \"trueLabelC\": \"ON\",\n    \"falseColorC\": \"#e95e45\",\n    \"falseLabelC\": \"OFF\",\n    \"trueColorD\": \"#96bf0b\",\n    \"trueLabelD\": \"ON\",\n    \"falseColorD\": \"#e95e45\",\n    \"falseLabelD\": \"OFF\",\n    \"xPos\": 0.5,\n    \"yPos\": 0.5,\n    \"mode\": \"PROD\",\n    \"commentaires\": \"n.c.\",\n    \"zoneName\": \"\",\n    \"zoneId\": \"\"\n};\n\nreturn {msg: attributesInit, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 754,
+          "layoutY": 106
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save attributes init",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE",
+          "notifyDevice": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 753,
+          "layoutY": 580
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Check Device Mode",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextNodes(metadata, msg) {\n    var results = []; // tableau des noms des prochains noeuds\n    if(metadata.ss_mode === \"PROD\") {\n        results.push(\"Mode Production\");\n    }\n    if(metadata.ss_mode === \"MAINTENANCE\") {\n        results.push(\"Mode Maintenance\");\n    }\n    return results;\n}\n\nreturn nextNodes(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 425,
+          "layoutY": 417
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbMsgTypeSwitchNode",
+        "name": "Attributes or Telemetry",
+        "debugMode": true,
+        "configuration": {
+          "version": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1119,
+          "layoutY": 580
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save Telemetry",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1120,
+          "layoutY": 346
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save Attributes",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE",
+          "notifyDevice": false
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Failure"
+      },
+      {
+        "fromIndex": 0,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 5,
+        "type": "Mode Production"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 3,
+        "type": "Post telemetry"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 6,
+        "type": "Post attributes"
+      }
+    ],
+    "ruleChainConnections": [
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "e2d11820-31ad-11ec-876a-cf762a600ce5"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1115,
+          "layoutY": 50,
+          "ruleChainNodeId": "rule-chain-node-14"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "ebd04180-31ad-11ec-876a-cf762a600ce5"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1118,
+          "layoutY": 118,
+          "ruleChainNodeId": "rule-chain-node-13"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "e2d11820-31ad-11ec-876a-cf762a600ce5"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1402,
+          "layoutY": 550,
+          "ruleChainNodeId": "rule-chain-node-12"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "ebd04180-31ad-11ec-876a-cf762a600ce5"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1402,
+          "layoutY": 609,
+          "ruleChainNodeId": "rule-chain-node-11"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "e2d11820-31ad-11ec-876a-cf762a600ce5"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1390,
+          "layoutY": 318,
+          "ruleChainNodeId": "rule-chain-node-10"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "ebd04180-31ad-11ec-876a-cf762a600ce5"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1394,
+          "layoutY": 387,
+          "ruleChainNodeId": "rule-chain-node-9"
+        },
+        "type": "Success"
+      }
+    ]
+  }
+}

@@ -1,0 +1,658 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "DISRUPTIVE TECHNOLOGIES - Diagbox : DATA",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 3,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2495,
+          "layoutY": 425
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Applatir le message",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    \"maintenance\": msg.values.maintenance\n};\n\nreturn {msg: newMsg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2497,
+          "layoutY": 510
+        },
+        "type": "org.thingsboard.rule.engine.gcp.pubsub.TbPubSubNode",
+        "name": "GCP connector",
+        "debugMode": true,
+        "configuration": {
+          "projectId": "fr-tpd-venf-hubgrade-dev",
+          "topicName": "pubsubdemo",
+          "serviceAccountKey": "{\r\n  \"type\": \"service_account\",\r\n  \"project_id\": \"fr-tpd-venf-hubgrade-dev\",\r\n  \"private_key_id\": \"955bd734ccd8c326333800ad738a5933c0d05f07\",\r\n  \"private_key\": \"-----BEGIN PRIVATE KEY-----\\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC4tHVNhSLp3lPz\\nwMtyfqLaKdI+UVlVPbFWbJE8my5DTuKKOB2Wi99Y367WZ/eLc75k47+GDKPQMrA1\\nvONvT98cCIKBbSPZBNdLCBSYE55heRz1NRuyw+IwZiI3gUPqw9ssfohvoelkSNL5\\nt4HBRjIttCFkItghGTyWZkWeSL7TBGbhVcGrKdMd3M04CIV3Vlk78mCXmEAxF3TQ\\nwAW0bCPbxA7VoxT48NxK/NbfOHPSTF6bXYRQpdX5DYasD5pHucBbQhmLPJ8ZmJg8\\n58B7IEfNQgglSIq1woqX99JKGYNoL1+MqaWEjKZkeb08w18AqMVr0MaDoL7x3g2W\\n1WBXbcm3AgMBAAECggEAWpgEiwu4pq3qTn3rK9LKLKhjmzZKU0FpqGKiz++rPs9D\\n1RiWBp+/YjeAaWBgLfGM2q5MY8LyXC1oeUsW4KNz4quX20R9VzYFJSOm+jpxLgz5\\n85ljZwil+ig2MzQ/bDg5WbcMU3i+YXZIqLvltDcqaHlYAWYHzSA0M+6gyfSTSCsk\\nsgiFn/XCwjSHgii2gdCiQYOko7KiMWk65raDn52XGdLQbhenv92dL9okWuV4gzIf\\nuGhPJGAAQ1+sF5eWTITiLlmGVIXc2fkdSZccO7Nq6bu35RIr03mz7KxXRCSMR/7l\\nDvY5fyI/Oa1VaaM/lgSp9/zBLEm3mC0NSl29xPOdCQKBgQDd2gXhK4nf8C7Tc0xT\\neRkBRpOqx4+yLr3GW+PnKcu3CKS6nT2rNNOSjGvc1WPgOspA1MHePN7cfKTLS4Vw\\nkmzCKJKSAtigt+u6uOsLSzP3QQovUZzWX4i5wmDfXdaJ8MEqHwrpojcw7wY54954\\nHD754X6kBOFqmd/qLxJKnkItbwKBgQDVIq7EZsw+gKiZJbUdKrzQvm5McA+EIyy5\\n2Xhe/Eecxt/WcOZ6xu9Mn6jEgwVA4kwmD+ilCFHg0oVRsjq49ucu31EEzX87T8zc\\n216PLy9rMLHDb+aVWPst7Uzqa+IAQGTEU/xMvDM39ADXmFSVdTSXaBHZBso5pzGk\\nWgkoyqsUOQKBgHK45cV04E1fRLevrc6UlqukNYRgwhwgM565sfa+FExIOfcOjO9V\\n1/q2hqih6I3xmNlBrCciTxSxl/5QxWZbMcaNeI3sztz9fvcF3PXwI6U+iufBSltI\\n98knjTS0r9aRGzKO7vO2INg7InsZLNfrs11AkF5875xSignt4YWYpRwdAoGAOupv\\nbRMNemmOMWde/UUHFJzPWInRgDFI98bJo1gRY6EF1v02eNHs7D1mJYwiM6Fac1sK\\ncDQwjfkjqUWfPeniVe6dMrqrZPXWJ2bsaKAed37qZJ/WGYqTRErIbDSOMIucTzj4\\nES4k6l6krPQKzZWsh/3YkSlzVSSGcGwDBCehyuECgYEAoljPTVYd55NEwJO0IF3C\\neZO/L+zIkvTFkdWPidbeyQE8Szx1C2c909TQ6ldSj95ezSi71T8JwnqID9CTnMih\\nIbJxKQR1xmuRk3ZnffyPU8vOfRzK2glDYPjaAck9apLRHlFrFhsWTKhqwA9g2NZa\\nTpB8xzn2ill1eD7QQk1GSCI=\\n-----END PRIVATE KEY-----\\n\",\r\n  \"client_email\": \"hubgrade-sarp-connect@fr-tpd-venf-hubgrade-dev.iam.gserviceaccount.com\",\r\n  \"client_id\": \"108324103953508437772\",\r\n  \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",\r\n  \"token_uri\": \"https://oauth2.googleapis.com/token\",\r\n  \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",\r\n  \"client_x509_cert_url\": \"https://www.googleapis.com/robot/v1/metadata/x509/hubgrade-sarp-connect%40fr-tpd-venf-hubgrade-dev.iam.gserviceaccount.com\"\r\n}",
+          "serviceAccountKeyFileName": "hubgrade-sarp-connect.json",
+          "messageAttributes": {
+            "maintenance": "$[maintenance]"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 393,
+          "layoutY": 514
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Check device mode",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextRelation(metadata, msg) {\n    var results = []; \n    if (metadata.ss_mode === \"PROD\") {\n        results.push('Mode Production');\n    }\n    if (metadata.ss_mode === \"MAINTENANCE\") {\n        results.push('Mode Maintenance');\n    }\n    return results;\n}\n\nreturn nextRelation(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 49,
+          "layoutY": 243
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbMsgTypeFilterNode",
+        "name": "Only Post Attributes",
+        "debugMode": true,
+        "configuration": {
+          "messageTypes": [
+            "POST_ATTRIBUTES_REQUEST",
+            "POST_TELEMETRY_REQUEST"
+          ]
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 751,
+          "layoutY": 510
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "msgType switch",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextRelation(metadata, msg) {\n    var results = []; \n    if (msg.msgType === \"networkStatus\") {\n        results.push('networkStatus');\n    }\n    if (msg.msgType === \"batteryStatus\") {\n        results.push('batteryStatus');\n    }\n    if (msg.msgType === \"PRESENT\") {\n        results.push('objectPresent : PRESENT');\n    }\n    if (msg.msgType === \"NOT_PRESENT\"){\n        results.push('objectPresent : NOT_PRESENT');\n    }\n    if (msg.msgType === \"touch\") {\n        results.push('touch');\n    }\n    return results;\n}\n\nreturn nextRelation(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1578,
+          "layoutY": 517
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "objectPresent : NOT_PRESENT",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1059,
+          "layoutY": 902
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save attributes initialisation",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 750,
+          "layoutY": 902
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "attributes initialisation message",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var attributesInit = metadata;\n\nreturn {msg: attributesInit, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 754,
+          "layoutY": 775
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save telemetry initialisation",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 397,
+          "layoutY": 849
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Messages d'initialisation",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var initTelemetry = {\n  total: 0,\n  totalGroupe: 0,\n  maintenance: 0,\n  matin: 0,\n  apresmidi: 0,\n  soir: 0,\n  nuit: 0\n};\n\nvar initAttributes = {\n    detectionTs: 0,\n    xPos: 0.5,\n    yPos: 0.5,\n    indicator: \"ON\",\n    battery: \"NC\",\n    signal: \"NC\",\n    appat: \"Graines\",\n    mode: \"PROD\",\n    commentaires: \"NC\",\n    customAlarm: 0,\n    seuilAlertePassageAvere: 5,\n    seuilAlertePassageCritique: 10,\n    zoneId: \"\",\n    zoneName: \"\",\n    addressName: \"\"\n};\n\nreturn {msg: initTelemetry, metadata: initAttributes, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud renvoie \"failure\" si le device n'a pas été initialisé.",
+          "layoutX": 36,
+          "layoutY": 513
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Import previous data",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "xPos",
+            "yPos",
+            "commentaires",
+            "mode",
+            "appat",
+            "battery",
+            "signal",
+            "seuilAlertePassageAvere",
+            "seuilAlertePassageCritique",
+            "detectionTs",
+            "zoneId",
+            "zoneName",
+            "assetName",
+            "addressName"
+          ],
+          "latestTsKeyNames": [
+            "total",
+            "totalGroupe",
+            "matin",
+            "apresmidi",
+            "soir",
+            "nuit",
+            "maintenance"
+          ],
+          "getLatestValueWithTs": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1862,
+          "layoutY": 1001
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split attributes & telemetry",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    \"ts\": msg.ts,\n    \"values\": {\n        \"total\": msg.total + parseInt(metadata.total),\n        \"totalGroupe\": msg.totalGroupe + parseInt(metadata.totalGroupe),\n        \"maintenance\": msg.maintenance + parseInt(metadata.maintenance),\n        \"matin\": msg.matin + parseInt(metadata.matin),\n        \"apresmidi\": msg.apresmidi + parseInt(metadata.apresmidi),\n        \"soir\": msg.soir + parseInt(metadata.soir),\n        \"nuit\": msg.nuit + parseInt(metadata.nuit)\n    }\n};\n\nvar newMetadata = {\n    \"deviceId\": msg.deviceId,\n    \"indicator\": msg.indicator,\n    \"lastMessage\": msg.lastMessage,\n    \"ts\": msg.ts,\n    \"msgType\": msg.msgType,\n    \"detectionTs\": msg.detectionTs\n};\n\nreturn {msg: newMsg, metadata: newMetadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2177,
+          "layoutY": 923
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Telemetry : touch",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2176,
+          "layoutY": 1113
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Create attributes message",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = metadata;\n\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2472,
+          "layoutY": 1112
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Attributes : touch",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Vérifie que la dernière détection a eu lieu il y a au moins 5 minutes.",
+          "layoutX": 1570,
+          "layoutY": 1002
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Plus de 5min ?",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "// function nextRelation(metadata, msg) {\n//     var results = [];\n//     var timer = 300000; // 5 minutes en millisecondes\n//     // var timer = 30000; // TEST avec 30 secondes en millisecondes\n//     var ecartDetection = parseInt(msg.ts) - parseInt(metadata.ss_detectionTs) - parseInt(timer);\n//     if(parseInt(ecartDetection) > 0) {\n//         results.push('Plus de 5min');\n//     } else {\n//         if(parseInt(ecartDetection) < 0) {\n//             results.push('Moins de 5min');\n//         }\n//     }\n//     return results;\n// }\n// return nextRelation(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1876,
+          "layoutY": 697
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split attributes & telemetry",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    \"ts\": msg.ts,\n    \"values\": {\n        \"total\": msg.total + parseInt(metadata.total),\n        \"totalGroupe\": msg.totalGroupe + parseInt(metadata.totalGroupe),\n        \"maintenance\": msg.maintenance + parseInt(metadata.maintenance),\n        \"matin\": msg.matin + parseInt(metadata.matin),\n        \"apresmidi\": msg.apresmidi + parseInt(metadata.apresmidi),\n        \"soir\": msg.soir + parseInt(metadata.soir),\n        \"nuit\": msg.nuit + parseInt(metadata.nuit)\n    }\n};\n\nvar newMetadata = {\n    \"deviceId\": msg.deviceId,\n    \"indicator\": msg.indicator,\n    \"lastMessage\": msg.lastMessage,\n    \"ts\": msg.ts,\n    \"msgType\": msg.msgType,\n    \"detectionTs\": msg.detectionTs\n};\n\nreturn {msg: newMsg, metadata: newMetadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2193,
+          "layoutY": 619
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Telemetry : objectPresent : PRESENT",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2192,
+          "layoutY": 804
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Create attributes message",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = metadata;\n\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2488,
+          "layoutY": 803
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Attributes : objectPresent : PRESENT",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Vérifie que la dernière détection a eu lieu il y a au moins 5 minutes.",
+          "layoutX": 1577,
+          "layoutY": 697
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Plus de 5min ?",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextRelation(metadata, msg) {\n    var results = [];\n    var timer = 300000; // 5 minutes en millisecondes\n    // var timer = 30000; // TEST avec 30 secondes en millisecondes\n    var ecartDetection = parseInt(msg.ts) - parseInt(metadata.ss_detectionTs) - parseInt(timer);\n    if(parseInt(ecartDetection) > 0) {\n        results.push('Plus de 5min');\n    } else {\n        if(parseInt(ecartDetection) < 0) {\n            results.push('Moins de 5min');\n        }\n    }\n    return results;\n}\nreturn nextRelation(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1580,
+          "layoutY": 352
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "batteryStatus",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1588,
+          "layoutY": 228
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "networkStatus",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 4,
+        "type": "Mode Production"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 10,
+        "type": "True"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 15,
+        "type": "touch"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 22,
+        "type": "networkStatus"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 21,
+        "type": "batteryStatus"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 20,
+        "type": "objectPresent : PRESENT"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 5,
+        "type": "objectPresent : NOT_PRESENT"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 6,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 7,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 8,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 10,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 10,
+        "toIndex": 9,
+        "type": "Failure"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 13,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 12,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 13,
+        "toIndex": 14,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 15,
+        "toIndex": 11,
+        "type": "Plus de 5min"
+      },
+      {
+        "fromIndex": 16,
+        "toIndex": 17,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 16,
+        "toIndex": 18,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 18,
+        "toIndex": 19,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 20,
+        "toIndex": 16,
+        "type": "Plus de 5min"
+      }
+    ],
+    "ruleChainConnections": [
+      {
+        "fromIndex": 5,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "42b39280-0df7-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1928,
+          "layoutY": 548,
+          "ruleChainNodeId": "rule-chain-node-38"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "547a7e20-5a41-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1928,
+          "layoutY": 482,
+          "ruleChainNodeId": "rule-chain-node-37"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 12,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "42b39280-0df7-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2493,
+          "layoutY": 954,
+          "ruleChainNodeId": "rule-chain-node-36"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 12,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "547a7e20-5a41-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2491,
+          "layoutY": 875,
+          "ruleChainNodeId": "rule-chain-node-35"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 14,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "42b39280-0df7-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2779,
+          "layoutY": 1162,
+          "ruleChainNodeId": "rule-chain-node-34"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 14,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "547a7e20-5a41-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2788,
+          "layoutY": 1078,
+          "ruleChainNodeId": "rule-chain-node-33"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 17,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "547a7e20-5a41-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2493,
+          "layoutY": 601,
+          "ruleChainNodeId": "rule-chain-node-32"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 17,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "42b39280-0df7-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2492,
+          "layoutY": 691,
+          "ruleChainNodeId": "rule-chain-node-31"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 19,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "42b39280-0df7-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2793,
+          "layoutY": 851,
+          "ruleChainNodeId": "rule-chain-node-30"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 19,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "547a7e20-5a41-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2791,
+          "layoutY": 772,
+          "ruleChainNodeId": "rule-chain-node-29"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 21,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "42b39280-0df7-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1927,
+          "layoutY": 394,
+          "ruleChainNodeId": "rule-chain-node-28"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 21,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "547a7e20-5a41-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1927,
+          "layoutY": 326,
+          "ruleChainNodeId": "rule-chain-node-27"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 22,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "42b39280-0df7-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1914,
+          "layoutY": 255,
+          "ruleChainNodeId": "rule-chain-node-26"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 22,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "547a7e20-5a41-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1925,
+          "layoutY": 180,
+          "ruleChainNodeId": "rule-chain-node-25"
+        },
+        "type": "Success"
+      }
+    ]
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "DISRUPTIVE TECHNOLOGIES - ON/OFF",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 0,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "Ce nœud permet de retarder le message de 3 jours afin de changer le statut du device d'actif à inactif.",
+          "layoutX": 333,
+          "layoutY": 151
+        },
+        "type": "org.thingsboard.rule.engine.delay.TbMsgDelayNode",
+        "name": "Wait 3j",
+        "debugMode": true,
+        "configuration": {
+          "useMetadataPeriodInSecondsPatterns": false,
+          "periodInSeconds": 259200,
+          "periodInSecondsPattern": null,
+          "maxPendingMsgs": 100000
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud change l'indicator de \"ON\" à \"OFF\".",
+          "layoutX": 1236,
+          "layoutY": 153
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Change to \"OFF\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    indicator: \"OFF\"\n};\n\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud enregistre la nouvelle valeur de l'indicator dans les attributs, et transmet le message vers la télémétrie.",
+          "layoutX": 1526,
+          "layoutY": 153
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save indicator=\"OFF\" in Attributes",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 927,
+          "layoutY": 153
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Capteur actif ?",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextRelation(metadata, msg) {\n    var results = [];\n    var lastMsgTs = parseInt(metadata.ss_ts);\n    var thisMsgTs = parseInt(msg.ts);\n    var ecartDetection = parseInt(lastMsgTs - thisMsgTs);\n    if(ecartDetection === 0) {\n        results.push(\"Capteur inactif\");\n    } else {\n        results.push(\"Capteur actif\");\n    }\n    return results;\n}\nreturn nextRelation(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce noeud charge le timestamp du dernier message arrivé afin de déterminer s'il date de +1h.",
+          "layoutX": 632,
+          "layoutY": 152
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Importe le timestamp du dernier message reçu",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "ts"
+          ],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 1,
+        "type": "Capteur inactif"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 3,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": [
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "547a7e20-5a41-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1849,
+          "layoutY": 154,
+          "ruleChainNodeId": "rule-chain-node-7"
+        },
+        "type": "Success"
+      }
+    ]
+  }
+}

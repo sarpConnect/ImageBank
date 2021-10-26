@@ -1,0 +1,220 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "ADEUNIS - Dry Contacts (PIEGES) : ROUTER",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 4,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 897,
+          "layoutY": 190
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Message d'initialisation",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    msgType: \"Initialisation\"\n};\n\nreturn {msg: newMsg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 407,
+          "layoutY": 375
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Importe derniers compteurs, position, appat",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "appat",
+            "xPos",
+            "yPos",
+            "mode",
+            "seuilAlerteReservoir",
+            "commentaires"
+          ],
+          "latestTsKeyNames": [
+            "compteurA",
+            "compteurB",
+            "compteurC",
+            "compteurD",
+            "compteurReservoir",
+            "matin",
+            "apresmidi",
+            "soir",
+            "nuit"
+          ],
+          "getLatestValueWithTs": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 52,
+          "layoutY": 378
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetOriginatorFieldsNode",
+        "name": "Import deviceType",
+        "debugMode": true,
+        "configuration": {
+          "fieldsMapping": {
+            "type": "deviceType"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Cette fonction retournera un array contenant le nom des nœuds où doivent être transmis les msg.",
+          "layoutX": 1250,
+          "layoutY": 377
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Switch selon deviceType",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextNodes(metadata, msg) {\n    var results = []; // tableau des noms des prochains noeuds\n    if(metadata.deviceType === \"Dry Contact\") {\n        results.push(\"Dry Contact\");\n    }\n    if(metadata.deviceType === \"Ekomille\") {\n        results.push(\"Ekomille\");\n    }\n    if(metadata.deviceType === \"Snapbox\") {\n        results.push(\"Snapbox\");\n    }\n    if(metadata.deviceType === \"RD Box\") {\n        results.push(\"RD Box\");\n    }\n    if(metadata.deviceType === \"Quadrapus\") {\n        results.push(\"Quadrapus\");\n    }\n    return results;\n}\n\nreturn nextNodes(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 51,
+          "layoutY": 259
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbMsgTypeFilterNode",
+        "name": "Only Post Attributes",
+        "debugMode": true,
+        "configuration": {
+          "messageTypes": [
+            "POST_ATTRIBUTES_REQUEST"
+          ]
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 898,
+          "layoutY": 376
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Check Device Mode",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextNodes(metadata, msg) {\n    var results = []; // tableau des noms des prochains noeuds\n    if(metadata.ss_mode === \"PROD\") {\n        results.push(\"Mode Production\");\n    }\n    if(metadata.ss_mode === \"MAINTENANCE\") {\n        results.push(\"Mode Maintenance\");\n    }\n    return results;\n}\n\nreturn nextNodes(metadata, msg);"
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 1,
+        "toIndex": 5,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 0,
+        "type": "Failure"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 2,
+        "type": "True"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 3,
+        "type": "Mode Production"
+      }
+    ],
+    "ruleChainConnections": [
+      {
+        "fromIndex": 0,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "cabc5530-06f0-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1649,
+          "layoutY": 187,
+          "ruleChainNodeId": "rule-chain-node-11"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "cabc5530-06f0-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1649,
+          "layoutY": 187,
+          "ruleChainNodeId": "rule-chain-node-11"
+        },
+        "type": "Dry Contact"
+      },
+      {
+        "fromIndex": 3,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "c1039fd0-06f0-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1649,
+          "layoutY": 431,
+          "ruleChainNodeId": "rule-chain-node-10"
+        },
+        "type": "RD Box"
+      },
+      {
+        "fromIndex": 3,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "b80ab800-06f0-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1648,
+          "layoutY": 555,
+          "ruleChainNodeId": "rule-chain-node-9"
+        },
+        "type": "Snapbox"
+      },
+      {
+        "fromIndex": 3,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "9067b360-11ff-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1650,
+          "layoutY": 297,
+          "ruleChainNodeId": "rule-chain-node-8"
+        },
+        "type": "Ekomille"
+      }
+    ]
+  }
+}

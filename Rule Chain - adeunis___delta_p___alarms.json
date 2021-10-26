@@ -1,0 +1,968 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "ADEUNIS - Delta P : ALARMS",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 10,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 500,
+          "layoutY": 845
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Signal faible",
+        "debugMode": false,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\nif (metadata.prevAlarmDetails) {\n    details = JSON.parse(metadata.prevAlarmDetails);\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "General Alarm",
+          "severity": "WARNING",
+          "propagate": false,
+          "relationTypes": []
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1949,
+          "layoutY": 840
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de signal faible",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1670,
+          "layoutY": 844
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Signal faible",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Delta P \"${label}\" (${deviceName}) - Signal faible",
+          "bodyTemplate": "Bonjour,\n\nLa qualité du signal du Delta P \"${label}\" (${deviceName}) est faible. Le Delta P se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1369,
+          "layoutY": 840
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to string",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1100,
+          "layoutY": 844
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 824,
+          "layoutY": 844
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1096,
+          "layoutY": 599
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1098,
+          "layoutY": 500
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1098,
+          "layoutY": 405
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1100,
+          "layoutY": 299
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud permet de récupérer le nom du device qui émet l'alarme.",
+          "layoutX": 49,
+          "layoutY": 225
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetOriginatorFieldsNode",
+        "name": "Get deviceName & label",
+        "debugMode": true,
+        "configuration": {
+          "fieldsMapping": {
+            "name": "deviceName",
+            "label": "label"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1357,
+          "layoutY": 601
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to string",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 824,
+          "layoutY": 602
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1357,
+          "layoutY": 501
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to string",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 824,
+          "layoutY": 501
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1355,
+          "layoutY": 401
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to string",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 825,
+          "layoutY": 402
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1355,
+          "layoutY": 300
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to string",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 822,
+          "layoutY": 300
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 52,
+          "layoutY": 333
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Import previous data",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "alertValueHigh",
+            "alertValueLow"
+          ],
+          "latestTsKeyNames": [
+            "voltageValue",
+            "pressureValue"
+          ],
+          "getLatestValueWithTs": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 55,
+          "layoutY": 442
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Check Alarms",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextNodes(metadata, msg) {\n    var results = []; // tableau des noms des prochains noeuds\n    if (metadata.ss_indicator !== undefined) {\n        if(metadata.ss_indicator === \"OFF\") {\n            results.push('Capteur inactif');\n        }\n    }\n    if (msg.lowBattery !== undefined) {\n        if(msg.lowBattery === true) {\n            results.push('Batterie faible');\n        }\n    }\n    if (msg.signalValue !== undefined) {\n        if(msg.signalValue === \"Mauvais\") {\n            results.push('Signal faible');\n        }\n    } else if (msg.values !== undefined) {\n        if(msg.values.pressureValue !== undefined) {\n            if(msg.values.pressureBreakdown === true) {\n                results.push(\"Panne de la VMC\");\n            } else if(parseInt(msg.values.pressureValue) >= parseInt(metadata.ss_alertValueLow) && parseInt(msg.values.pressureValue) <= parseInt(metadata.ss_alertValueHigh)) {\n                results.push(\"Défaut de pression\");\n            }\n        }\n        else if (msg.values.voltageValue !== undefined) {\n            if(msg.values.voltageBreakdown === true) {\n                results.push(\"Panne de moteur\");\n            }\n        }\n    }\n    return results;\n}\n\nreturn nextNodes(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1660,
+          "layoutY": 502
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Batterie faible",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Delta P \"${label}\" (${deviceName}) - Batterie faible",
+          "bodyTemplate": "Bonjour,\n\nLe niveau de batterie du Delta P \"${label}\" (${deviceName}) est faible. Le Delta P se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1933,
+          "layoutY": 497
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de batterie faible",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1660,
+          "layoutY": 602
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Panne de VMC",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme de la VMC associée au Delta P \"${label}\" (${deviceName}) - Panne de la VMC",
+          "bodyTemplate": "Bonjour,\n\nLa VMC associée au Delta P \"${label}\" (${deviceName}) est en panne. Le Delta P se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1935,
+          "layoutY": 599
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de panne de vmc",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1666,
+          "layoutY": 301
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Defaut de pression",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Delta P \"${label}\" (${deviceName}) - Défaut de pression",
+          "bodyTemplate": "Bonjour,\n\nLe Delta P \"${label}\" (${deviceName}) est en défaut de pression dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1937,
+          "layoutY": 302
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de défaut de pression",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 495,
+          "layoutY": 501
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Batterie faible",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\ndetails.battery = msg.lowBattery;\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.count = prevDetails.count + 1;\n} else {\n    details.count = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Batterie faible",
+          "severity": "CRITICAL",
+          "propagate": true,
+          "relationTypes": []
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 500,
+          "layoutY": 606
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Panne de la VMC",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n// details.values = msg.values;\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.count = prevDetails.count + 1;\n} else {\n    details.count = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Panne de la VMC",
+          "severity": "CRITICAL",
+          "propagate": true,
+          "relationTypes": []
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 499,
+          "layoutY": 410
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Panne de moteur",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n// details.values = msg.values;\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.count = prevDetails.count + 1;\n} else {\n    details.count = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Panne de moteur",
+          "severity": "MAJOR",
+          "propagate": true,
+          "relationTypes": []
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 496,
+          "layoutY": 301
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Défaut de pression",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\ndetails.pressureValue = msg.values.pressureValue;\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.count = prevDetails.count + 1;\n} else {\n    details.count = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Défaut de pression",
+          "severity": "MAJOR",
+          "propagate": true,
+          "relationTypes": [
+            "Contains",
+            "Manages"
+          ]
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1662,
+          "layoutY": 401
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Panne de moteur",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du moteur associé au Delta P \"${label}\" (${deviceName}) - Panne de moteur",
+          "bodyTemplate": "Bonjour,\n\nLe moteur associé au Delta P \"${label}\" (${deviceName}) est en panne. Le Delta P se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1937,
+          "layoutY": 404
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de panne moteur",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1945,
+          "layoutY": 733
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de capteur inactif",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1666,
+          "layoutY": 737
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Capteur inactif",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme d'inactivité associée au Delta P \"${label}\" (${deviceName})",
+          "bodyTemplate": "Bonjour,\n\nLe Delta P ${deviceName} est inactif depuis 3 jours. Le Delta P se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1365,
+          "layoutY": 733
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to string",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1096,
+          "layoutY": 737
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 820,
+          "layoutY": 737
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 499,
+          "layoutY": 735
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Capteur inactif",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n// details.values = msg.values;\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.count = prevDetails.count + 1;\n} else {\n    details.count = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Capteur inactif",
+          "severity": "CRITICAL",
+          "propagate": true,
+          "relationTypes": []
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 5,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 0,
+        "toIndex": 5,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "toIndex": 11,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 13,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 15,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 17,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 10,
+        "toIndex": 19,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 23,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 12,
+        "toIndex": 6,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 13,
+        "toIndex": 21,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 14,
+        "toIndex": 7,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 15,
+        "toIndex": 31,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 16,
+        "toIndex": 8,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 17,
+        "toIndex": 25,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 18,
+        "toIndex": 9,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 19,
+        "toIndex": 20,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 20,
+        "toIndex": 0,
+        "type": "Signal faible"
+      },
+      {
+        "fromIndex": 20,
+        "toIndex": 30,
+        "type": "Defaut de pression"
+      },
+      {
+        "fromIndex": 20,
+        "toIndex": 29,
+        "type": "Panne de moteur"
+      },
+      {
+        "fromIndex": 20,
+        "toIndex": 27,
+        "type": "Batterie faible"
+      },
+      {
+        "fromIndex": 20,
+        "toIndex": 28,
+        "type": "Panne de la VMC"
+      },
+      {
+        "fromIndex": 20,
+        "toIndex": 38,
+        "type": "Capteur inactif"
+      },
+      {
+        "fromIndex": 21,
+        "toIndex": 22,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 23,
+        "toIndex": 24,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 26,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 27,
+        "toIndex": 14,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 27,
+        "toIndex": 14,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 28,
+        "toIndex": 12,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 28,
+        "toIndex": 12,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 29,
+        "toIndex": 16,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 29,
+        "toIndex": 16,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 30,
+        "toIndex": 18,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 30,
+        "toIndex": 18,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 31,
+        "toIndex": 32,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 34,
+        "toIndex": 33,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 35,
+        "toIndex": 34,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 36,
+        "toIndex": 35,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 37,
+        "toIndex": 36,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 38,
+        "toIndex": 37,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 38,
+        "toIndex": 37,
+        "type": "Created"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

@@ -1,0 +1,353 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "ADEUNIS - Dry Contacts : Quadrapus",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 0,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "Ce nœud renvoie \"failure\" s'il s'agit du premier message reçu par le device. Sinon, il renvoie \"success\".",
+          "layoutX": 51,
+          "layoutY": 284
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Test initialisation",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "mode",
+            "zoneName",
+            "volumeTotal",
+            "seuilA",
+            "seuilB",
+            "seuilC",
+            "seuilD"
+          ],
+          "latestTsKeyNames": [
+            "pourcentage"
+          ],
+          "getLatestValueWithTs": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 865,
+          "layoutY": 94
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Messages d'Initialisation",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var telemetryInit = {\n    \"poireA\": false,\n    \"poireB\": false,\n    \"poireC\": false,\n    \"poireD\": false,\n    \"volumeRemplissage\": 0,\n    \"pourcentage\": 0\n};\n\nvar attributesInit = {\n    \"signalValue\": msg.signalValue,\n    \"lowBattery\": msg.lowBattery,\n    \"xPos\": 0.5,\n    \"yPos\": 0.5,\n    \"volumeTotal\": 0,\n    \"seuilA\": 25,\n    \"seuilB\": 50,\n    \"seuilC\": 75,\n    \"seuilD\": 100,\n    \"diametre\": 0,\n    \"hauteur\": 0,\n    \"mode\": \"PROD\",\n    \"commentaires\": \"n.c.\",\n    \"zoneName\": \"\",\n    \"zoneId\": \"\",\n    \"zoneType\": \"\"\n};\n\nreturn {msg: telemetryInit, metadata: attributesInit, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1154,
+          "layoutY": 31
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save telemetry initialisation",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1158,
+          "layoutY": 139
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "attributes initialisation message",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var attributesInit = metadata;\n\nreturn {msg: attributesInit, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1515,
+          "layoutY": 146
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save attributes initialisation",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1156,
+          "layoutY": 276
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x10",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1155,
+          "layoutY": 426
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x20",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1157,
+          "layoutY": 569
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x30",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Cette fonction retournera un array contenant le nom des nœuds où doivent être transmis les msg.",
+          "layoutX": 702,
+          "layoutY": 282
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Switch selon msgType",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextNodes(metadata, msg) {\n    var results = []; // tableau des noms des prochains noeuds\n    if(msg.msgType === \"0x10 Dry Contacts configuration\") {\n        results.push(\"0x10 Dry Contacts configuration\");\n    }\n    if(msg.msgType === \"0x20 Configuration\") {\n        results.push(\"0x20 Configuration\");\n    }\n    if(msg.msgType === \"0x30 Keep alive\") {\n        results.push(\"0x30 Keep alive\");\n    }\n    if(msg.msgType === \"0x40 Dry Contacts data\") {\n        results.push(\"0x40 Dry Contacts data\");\n    }\n    return results;\n}\n\nreturn nextNodes(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1847,
+          "layoutY": 936
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x40 attributes",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1527,
+          "layoutY": 934
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Create attributes message",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = metadata;\n\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1527,
+          "layoutY": 746
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save 0x40 telemetry",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1151,
+          "layoutY": 831
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split attributes and telemetry",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "// Déterminer l'ordre des poires en fonction de la valeur de leurs seuils respectifs\r\nfunction sortPoires(){\r\n    var poireA = msg.channelACurrentState;\r\n    var poireB = msg.channelBCurrentState;\r\n    var poireC = msg.channelCCurrentState;\r\n    var poireD = msg.channelDCurrentState;\r\n    var seuilA = parseFloat(metadata.ss_seuilA);\r\n    var seuilB = parseFloat(metadata.ss_seuilB);\r\n    var seuilC = parseFloat(metadata.ss_seuilC);\r\n    var seuilD = parseFloat(metadata.ss_seuilD);\r\n    var seuils = [{'name': \"poireA\", \"seuil\": seuilA, \"state\": poireA}, {'name': \"poireB\", \"seuil\": seuilB, \"state\": poireB}, {'name': \"poireC\", \"seuil\": seuilC, \"state\": poireC}, {'name': \"poireD\", \"seuil\": seuilD, \"state\": poireD}];\r\n    return seuils;\r\n}\r\n\r\nvar sortedPoires = sortPoires();\r\n\r\n// Vérifier que les poires fonctionnent correctement en étudiant la cohérence de leurs valeurs selon leurs seuils respectifs\r\nfunction checkBugPoires(poires) {\r\n    var results = [];\r\n    var testPoires = [];\r\n    for(i=0; i < poires.length - 1; i++) {\r\n        for(j = poires.length - 1; j > i; j--) {\r\n            if(poires[j].state === true && poires[i].state === false) {\r\n                testPoires.push(poires[i].name);\r\n            }\r\n        }\r\n    }\r\n    results = removeDups(testPoires);\r\n    return results;\r\n}\r\n\r\nfunction removeDups(testPoires) {\r\n  var unique = {};\r\n  testPoires.forEach(function(i) {\r\n    if(!unique[i]) {\r\n      unique[i] = true;\r\n    }\r\n  });\r\n  return Object.keys(unique);\r\n}\r\n\r\nvar testPoiresResult = checkBugPoires(sortedPoires).toString();\r\n\r\n// Calculer le volume de remplissage de la cuve à partir de la valeur des poires et de leurs seuils\r\nfunction getRemplissageValue(poires) {\r\n    var result = {\"volume\": 0, \"pourcentage\": 0};\r\n    for(i=0; i < poires.length; i++) {\r\n        if(poires[i].state === true) {\r\n            result = {\r\n              \"volume\": parseFloat(metadata.ss_volumeTotal) * parseFloat(poires[i].seuil) / 100,\r\n              \"pourcentage\": parseFloat(poires[i].seuil),\r\n            };\r\n        }\r\n    }\r\n    return result;\r\n}\r\n\r\nvar remplissageValue = getRemplissageValue(sortedPoires);\r\n\r\n// Créer le message sortant \r\nfunction createMsgOutput(msg, metadata){\r\n    var newMsg = {\r\n        \"ts\": msg.ts,\r\n        \"values\": {\r\n            \"poireA\": msg.channelACurrentState,\r\n            \"poireB\": msg.channelBCurrentState,\r\n            \"poireC\": msg.channelCCurrentState,\r\n            \"poireD\": msg.channelDCurrentState,\r\n            \"volumeRemplissage\": remplissageValue.volume,\r\n            \"pourcentage\": remplissageValue.pourcentage\r\n        }\r\n    };\r\n    return newMsg;\r\n}\r\n\r\n// Créer les metadata sortantes\r\nfunction createNewMetadata(msg, metadata) {\r\n    var newMetadata = {\r\n            \"ts\": msg.ts,\r\n            \"lastMessage\": msg.lastMessage,\r\n            \"frameCounter\": msg.frameCounter,\r\n            \"hardwareError\": msg.hardwareError,\r\n            \"lowBattery\": msg.lowBattery,\r\n            \"configurationDone\": msg.configurationDone,\r\n            \"signalValue\": msg.signalValue,\r\n            \"msgType\": msg.msgType,\r\n            \"indicator\": msg.indicator,\r\n            \"decodingInfo\": msg.decodingInfo,\r\n            \"bugTests\": testPoiresResult,\r\n            \"pourcentage\": metadata.pourcentage\r\n    };\r\n    return newMetadata;\r\n}\r\n\r\nvar newMsg = createMsgOutput(msg, metadata);\r\nvar newMetadata = createNewMetadata(msg, metadata);\r\n\r\nreturn {msg: newMsg, metadata: newMetadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 384,
+          "layoutY": 282
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Check Device Mode",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextNodes(metadata, msg) {\n    var results = []; // tableau des noms des prochains noeuds\n    if(metadata.ss_mode === \"PROD\") {\n        results.push(\"Mode Production\");\n    }\n    if(metadata.ss_mode === \"MAINTENANCE\") {\n        results.push(\"Mode Maintenance\");\n    }\n    return results;\n}\n\nreturn nextNodes(metadata, msg);"
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 13,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Failure"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 12,
+        "type": "0x40 Dry Contacts data"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 7,
+        "type": "0x30 Keep alive"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 5,
+        "type": "0x10 Dry Contacts configuration"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 6,
+        "type": "0x20 Configuration"
+      },
+      {
+        "fromIndex": 10,
+        "toIndex": 9,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 12,
+        "toIndex": 11,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 12,
+        "toIndex": 10,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 13,
+        "toIndex": 8,
+        "type": "Mode Production"
+      }
+    ],
+    "ruleChainConnections": [
+      {
+        "fromIndex": 5,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "d1736330-da6e-11eb-b1e6-af88012f9624"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1519,
+          "layoutY": 318,
+          "ruleChainNodeId": "rule-chain-node-25"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "d1736330-da6e-11eb-b1e6-af88012f9624"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1522,
+          "layoutY": 471,
+          "ruleChainNodeId": "rule-chain-node-23"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "d1736330-da6e-11eb-b1e6-af88012f9624"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1527,
+          "layoutY": 621,
+          "ruleChainNodeId": "rule-chain-node-21"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "d1736330-da6e-11eb-b1e6-af88012f9624"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2135,
+          "layoutY": 978,
+          "ruleChainNodeId": "rule-chain-node-19"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "d1736330-da6e-11eb-b1e6-af88012f9624"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1825,
+          "layoutY": 796,
+          "ruleChainNodeId": "rule-chain-node-17"
+        },
+        "type": "Success"
+      }
+    ]
+  }
+}

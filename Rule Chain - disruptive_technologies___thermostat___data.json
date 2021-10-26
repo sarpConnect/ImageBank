@@ -1,0 +1,302 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "DISRUPTIVE TECHNOLOGIES - Thermostat : DATA",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 8,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 456,
+          "layoutY": 646
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Check device mode",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextRelation(metadata, msg) {\n    var results = []; \n    if (metadata.ss_mode === \"PROD\") {\n        results.push('Mode Production');\n    }\n    if (metadata.ss_mode === \"MAINTENANCE\") {\n        results.push('Mode Maintenance');\n    }\n    return results;\n}\n\nreturn nextRelation(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 460,
+          "layoutY": 981
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Messages d'initialisation",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var initAttributes = {\n    xPos: 0.5,\n    yPos: 0.5,\n    battery: \"NC\",\n    signal: \"NC\",\n    mode: \"PROD\",\n};\n\nreturn {msg: initAttributes, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud renvoie \"failure\" si le device n'a pas été initialisé.",
+          "layoutX": 99,
+          "layoutY": 645
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Import previous data",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "xPos",
+            "yPos",
+            "mode",
+            "battery",
+            "signal"
+          ],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1631,
+          "layoutY": 891
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split attributes & telemetry",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    \"ts\": msg.ts,\n    \"values\": {\n        \"temperature\": msg.temperature,\n    }\n};\n\nvar newMetadata = {\n    \"deviceId\": msg.deviceId,\n    \"indicator\": msg.indicator,\n    \"lastMessage\": msg.lastMessage,\n    \"ts\": msg.ts,\n    \"msgType\": msg.msgType\n};\n\nreturn {msg: newMsg, metadata: newMetadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2228,
+          "layoutY": 827
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Telemetry : temperature",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2227,
+          "layoutY": 1017
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Create attributes message",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = metadata;\n\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2523,
+          "layoutY": 1016
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Attributes : temperature",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1643,
+          "layoutY": 484
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "batteryStatus",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 112,
+          "layoutY": 375
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbMsgTypeFilterNode",
+        "name": "Only Post Attributes",
+        "debugMode": true,
+        "configuration": {
+          "messageTypes": [
+            "POST_ATTRIBUTES_REQUEST",
+            "POST_TELEMETRY_REQUEST"
+          ]
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 814,
+          "layoutY": 642
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "msgType switch",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextRelation(metadata, msg) {\n    var results = []; \n    if (msg.msgType === \"networkStatus\") {\n        results.push('networkStatus');\n    }\n    if (msg.msgType === \"batteryStatus\") {\n        results.push('batteryStatus');\n    }\n    if (msg.msgType === \"temperature\") {\n        results.push('temperature');\n    }\n    return results;\n}\n\nreturn nextRelation(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 800,
+          "layoutY": 986
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save attributes initialisation",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1648,
+          "layoutY": 292
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "networkStatus",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 9,
+        "type": "Mode Production"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 10,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 0,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 1,
+        "type": "Failure"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 5,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 6,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 2,
+        "type": "True"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 11,
+        "type": "networkStatus"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 3,
+        "type": "temperature"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 7,
+        "type": "batteryStatus"
+      }
+    ],
+    "ruleChainConnections": [
+      {
+        "fromIndex": 4,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "42b39280-0df7-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2549,
+          "layoutY": 828,
+          "ruleChainNodeId": "rule-chain-node-15"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "42b39280-0df7-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2825,
+          "layoutY": 1016,
+          "ruleChainNodeId": "rule-chain-node-14"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "42b39280-0df7-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1990,
+          "layoutY": 479,
+          "ruleChainNodeId": "rule-chain-node-13"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "42b39280-0df7-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2003,
+          "layoutY": 292,
+          "ruleChainNodeId": "rule-chain-node-19"
+        },
+        "type": "Success"
+      }
+    ]
+  }
+}

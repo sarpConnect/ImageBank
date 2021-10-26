@@ -1,0 +1,130 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "ADEUNIS - Dry Contacts : Quadrapus : ON/OFF",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 0,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "Ce nœud permet de retarder le message de 3 jours afin de changer le statut du device d'actif à inactif.",
+          "layoutX": 356,
+          "layoutY": 147
+        },
+        "type": "org.thingsboard.rule.engine.delay.TbMsgDelayNode",
+        "name": "Wait 3j",
+        "debugMode": true,
+        "configuration": {
+          "useMetadataPeriodInSecondsPatterns": false,
+          "periodInSeconds": 259200,
+          "periodInSecondsPattern": null,
+          "maxPendingMsgs": 100000
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce noeud charge le timestamp du dernier message arrivé afin de déterminer s'il date de +1h.",
+          "layoutX": 655,
+          "layoutY": 148
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Importe le timestamp du dernier message reçu",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "ts"
+          ],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 950,
+          "layoutY": 149
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Capteur actif ?",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextRelation(metadata, msg) {\n    var results = [];\n    var lastMsgTs = parseInt(metadata.ss_ts);\n    var thisMsgTs = parseInt(msg.ts);\n    var ecartDetection = parseInt(lastMsgTs - thisMsgTs);\n    if(ecartDetection === 0) {\n        results.push(\"Capteur inactif\");\n    } else {\n        results.push(\"Capteur actif\");\n    }\n    return results;\n}\nreturn nextRelation(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud enregistre la nouvelle valeur de l'indicator dans les attributs, et transmet le message vers la télémétrie.",
+          "layoutX": 1549,
+          "layoutY": 149
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save indicator=\"OFF\" in Attributes",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud change l'indicator de \"ON\" à \"OFF\".",
+          "layoutX": 1259,
+          "layoutY": 149
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Change to \"OFF\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    indicator: \"OFF\"\n};\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 4,
+        "type": "Capteur inactif"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 3,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": [
+      {
+        "fromIndex": 3,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "d1736330-da6e-11eb-b1e6-af88012f9624"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1850,
+          "layoutY": 151,
+          "ruleChainNodeId": "rule-chain-node-7"
+        },
+        "type": "Success"
+      }
+    ]
+  }
+}

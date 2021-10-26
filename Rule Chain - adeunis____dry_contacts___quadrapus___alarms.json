@@ -1,0 +1,1266 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "ADEUNIS -  Dry Contacts : Quadrapus : Alarms",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 12,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1562,
+          "layoutY": 301
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to String",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1556,
+          "layoutY": 378
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to String",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 2131,
+          "layoutY": 204
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail d'infestation probable",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 622,
+          "layoutY": 207
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Cuve pleine",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.declenchements = prevDetails.declenchements + 1;\n} else {\n    details.declenchements = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Cuve pleine",
+          "severity": "CRITICAL",
+          "propagate": true,
+          "relationTypes": [
+            "Contains"
+          ]
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 2131,
+          "layoutY": 632
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de signal faible",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1861,
+          "layoutY": 637
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Signal faible",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Quadrapus \"${label}\" (${deviceName}) - Signal faible",
+          "bodyTemplate": "Bonjour,\n\nLa qualité du signal du Quadrapus \"${label}\" (${deviceName}) est faible. Le Quadrapus se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 2129,
+          "layoutY": 552
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de batterie faible",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1861,
+          "layoutY": 556
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Batterie faible",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Quadrapus \"${label}\" (${deviceName}) - Batterie faible",
+          "bodyTemplate": "Bonjour,\n\nLe niveau de batterie du Quadrapus \"${label}\" (${deviceName}) est faible. Le Quadrapus se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 2127,
+          "layoutY": 721
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de Gateway OFFLINE",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1864,
+          "layoutY": 722
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Vidage",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alerte vidage du Quadrapus \"${label}\" (${deviceName})",
+          "bodyTemplate": "Bonjour,\n\nLe Quadrapus \"${label}\" (${deviceName}) signale un vidage de la cuve à $[pourcentage] dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 616,
+          "layoutY": 724
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Vidage",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.declenchements = prevDetails.declenchements + 1;\n} else {\n    details.declenchements = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Vidage",
+          "severity": "CRITICAL",
+          "propagate": true,
+          "relationTypes": []
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 49,
+          "layoutY": 340
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Import previous data",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "zoneName",
+            "previousPourcentage"
+          ],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 48,
+          "layoutY": 249
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetOriginatorFieldsNode",
+        "name": "Import deviceName & label",
+        "debugMode": true,
+        "configuration": {
+          "fieldsMapping": {
+            "name": "deviceName",
+            "label": "label"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1564,
+          "layoutY": 206
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to String",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1860,
+          "layoutY": 204
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Cuve pleine",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Quadrapus \"${label}\" (${deviceName}) - Cuve pleine",
+          "bodyTemplate": "Bonjour,\n\nLe Quadrapus \"${label}\" (${deviceName}) signale une alerte \"Cuve pleine\" dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 620,
+          "layoutY": 294
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Cuve vide",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.declenchements = prevDetails.declenchements + 1;\n} else {\n    details.declenchements = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Cuve vide",
+          "severity": "CRITICAL",
+          "propagate": true,
+          "relationTypes": [
+            "Contains",
+            "Manages"
+          ]
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 617,
+          "layoutY": 386
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Remplissage",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.declenchements = prevDetails.declenchements + 1;\n} else {\n    details.declenchements = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Remplissage",
+          "severity": "WARNING",
+          "propagate": true,
+          "relationTypes": [
+            "Contains",
+            "Manages"
+          ]
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 617,
+          "layoutY": 468
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Capteur inactif",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.declenchements = prevDetails.declenchements + 1;\n} else {\n    details.declenchements = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Capteur inactif",
+          "severity": "MAJOR",
+          "propagate": true,
+          "relationTypes": []
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 54,
+          "layoutY": 431
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Check Alarms",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextNodes(metadata, msg) {\n    var results = []; // tableau des noms des prochains noeuds\n   \n    if (msg.values !== undefined && msg.values.poire0 === true && msg.values.poire1 === true && msg.values.poire2 === true && msg.values.poire3 === true) {\n         results.push('Cuve pleine');\n    }\n    if (msg.values !== undefined && msg.values.poire0 === false && msg.values.poire1 === false && msg.values.poire2 === false && msg.values.poire3 === false) {\n         results.push('Cuve vide');\n    }\n    if (msg.values !== undefined && metadata.bugTests !== \" \" ) {\n         results.push('Dysfonctionnement');\n    }\n    if (msg.values !== undefined && parseInt(metadata.pourcentage) < msg.values.pourcentage) {\n         results.push('Remplissage');\n    }\n    if (msg.values !== undefined && msg.values !== undefined && parseInt(metadata.pourcentage) > msg.values.pourcentage) {\n         results.push('Vidage');\n    }\n    if (msg.lowBattery === true) {\n        results.push('Batterie faible');\n    }\n    if (msg.signalValue === \"Mauvais\") {\n        results.push('Signal faible');\n    }\n    if (msg.indicator === \"OFF\") {\n        results.push('Capteur inactif');\n    }\n    return results;\n}\n\nreturn nextNodes(metadata, msg);\n\n// var result = false; if(test % 3(attributes) === 0 && test !== 0) { result = true; }"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1278,
+          "layoutY": 207
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1271,
+          "layoutY": 728
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1280,
+          "layoutY": 644
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1279,
+          "layoutY": 552
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1281,
+          "layoutY": 469
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1282,
+          "layoutY": 381
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1286,
+          "layoutY": 298
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1558,
+          "layoutY": 470
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to String",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1556,
+          "layoutY": 549
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to String",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1556,
+          "layoutY": 639
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to String",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1555,
+          "layoutY": 728
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to String",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1001,
+          "layoutY": 207
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1000,
+          "layoutY": 298
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 997,
+          "layoutY": 383
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1000,
+          "layoutY": 471
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 998,
+          "layoutY": 559
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 998,
+          "layoutY": 640
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 998,
+          "layoutY": 723
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 2135,
+          "layoutY": 469
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de capteur inactif",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1863,
+          "layoutY": 468
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Capteur inactif",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Quadrapus \"${label}\" (${deviceName}) - Quadrapus inactif",
+          "bodyTemplate": "Bonjour,\n\nLe Quadrapus  \"${label}\" (${deviceName}) est inactif depuis 3 jours.  Le Quadrapus se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 615,
+          "layoutY": 634
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Signal faible",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.declenchements = prevDetails.declenchements + 1;\n} else {\n    details.declenchements = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Signal faible",
+          "severity": "CRITICAL",
+          "propagate": true,
+          "relationTypes": []
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 616,
+          "layoutY": 557
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Batterie faible",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.declenchements = prevDetails.declenchements + 1;\n} else {\n    details.declenchements = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Batterie faible",
+          "severity": "CRITICAL",
+          "propagate": true,
+          "relationTypes": []
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 2131,
+          "layoutY": 381
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail d'infestation critique",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1864,
+          "layoutY": 382
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Remplissage",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Quadrapus \"${label}\" (${deviceName}) - Remplissage",
+          "bodyTemplate": "Bonjour,\n\nLe Quadrapus \"${label}\" (${deviceName}) signale un remplissage de la cuve à $[pourcentage] dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 2132,
+          "layoutY": 293
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail d'infestation avérée",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1861,
+          "layoutY": 293
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Cuve vide",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Quadrapus \"${label}\" (${deviceName}) - Cuve vide",
+          "bodyTemplate": "Bonjour,\n\nLe Quadrapus \"${label}\" (${deviceName}) signale une cuve vide dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 996,
+          "layoutY": 810
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1559,
+          "layoutY": 809
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to String",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 2126,
+          "layoutY": 807
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail d'infestation probable",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 617,
+          "layoutY": 810
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Dysfonctionnement",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.declenchements = prevDetails.declenchements + 1;\n} else {\n    details.declenchements = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Dysfonctionnement",
+          "severity": "MAJOR",
+          "propagate": true,
+          "relationTypes": [
+            "Contains"
+          ]
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1855,
+          "layoutY": 807
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Dysfonctionnement",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme de dysfonctionnement du Quadrapus \"${label}\" (${deviceName})  ",
+          "bodyTemplate": "Bonjour,\n\nLe Quadrapus \"${label}\" (${deviceName})  signale le dysfonctionnement de/des poire(s) ${bugTests}. Le Quadrapus se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1267,
+          "layoutY": 808
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 44,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 42,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 30,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 30,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 6,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 8,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 10,
+        "toIndex": 36,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 10,
+        "toIndex": 36,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 18,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 12,
+        "toIndex": 11,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 13,
+        "toIndex": 14,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 14,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 15,
+        "toIndex": 31,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 15,
+        "toIndex": 31,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 16,
+        "toIndex": 32,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 16,
+        "toIndex": 32,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 17,
+        "toIndex": 33,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 17,
+        "toIndex": 33,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 18,
+        "toIndex": 48,
+        "type": "Dysfonctionnement"
+      },
+      {
+        "fromIndex": 18,
+        "toIndex": 3,
+        "type": "Cuve pleine"
+      },
+      {
+        "fromIndex": 18,
+        "toIndex": 15,
+        "type": "Cuve vide"
+      },
+      {
+        "fromIndex": 18,
+        "toIndex": 16,
+        "type": "Remplissage"
+      },
+      {
+        "fromIndex": 18,
+        "toIndex": 17,
+        "type": "Capteur inactif"
+      },
+      {
+        "fromIndex": 18,
+        "toIndex": 40,
+        "type": "Batterie faible"
+      },
+      {
+        "fromIndex": 18,
+        "toIndex": 39,
+        "type": "Signal faible"
+      },
+      {
+        "fromIndex": 18,
+        "toIndex": 10,
+        "type": "Vidage"
+      },
+      {
+        "fromIndex": 19,
+        "toIndex": 13,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 20,
+        "toIndex": 29,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 21,
+        "toIndex": 28,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 22,
+        "toIndex": 27,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 23,
+        "toIndex": 26,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 24,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 0,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 26,
+        "toIndex": 38,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 27,
+        "toIndex": 7,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 28,
+        "toIndex": 5,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 29,
+        "toIndex": 9,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 30,
+        "toIndex": 19,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 31,
+        "toIndex": 25,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 32,
+        "toIndex": 24,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 33,
+        "toIndex": 23,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 34,
+        "toIndex": 22,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 35,
+        "toIndex": 21,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 36,
+        "toIndex": 20,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 38,
+        "toIndex": 37,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 39,
+        "toIndex": 35,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 39,
+        "toIndex": 35,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 40,
+        "toIndex": 34,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 40,
+        "toIndex": 34,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 42,
+        "toIndex": 41,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 44,
+        "toIndex": 43,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 45,
+        "toIndex": 50,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 46,
+        "toIndex": 49,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 48,
+        "toIndex": 45,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 48,
+        "toIndex": 45,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 49,
+        "toIndex": 47,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 50,
+        "toIndex": 46,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

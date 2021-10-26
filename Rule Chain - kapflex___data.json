@@ -1,0 +1,320 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "KAPFLEX - Data",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 9,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1153,
+          "layoutY": 300
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split measures[1]",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    ts: msg[1].Timestamp * 1000,\n    values: {\n        hydroCarbonHeight: msg[1].HydroCarbonHeight,\n        temperature: msg[1].Temperature\n    }\n};\n\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1150,
+          "layoutY": 423
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split measures[2]",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    ts: msg[2].Timestamp * 1000,\n    values: {\n        hydroCarbonHeight: msg[2].HydroCarbonHeight,\n        temperature: msg[2].Temperature\n    }\n};\n\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1485,
+          "layoutY": 362
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save Kapflex telemetry",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1151,
+          "layoutY": 552
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split measures[3]",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    ts: msg[3].Timestamp * 1000,\n    values: {\n        hydroCarbonHeight: msg[3].HydroCarbonHeight,\n        temperature: msg[3].Temperature\n    }\n};\n\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1151,
+          "layoutY": 675
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split attributes",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newAttributes = metadata;\n\nreturn {msg: newAttributes, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1482,
+          "layoutY": 673
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save Kapflex attributes",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 501,
+          "layoutY": 529
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Initialise mode en \"PROD\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "msg.mode = \"PROD\";\nmsg.zoneId = \"\";\nmsg.zoneName = \"\";\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 501,
+          "layoutY": 421
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Check device mode",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextRelation(metadata, msg) {\n    var results = []; \n    if (metadata.ss_mode === \"PROD\") {\n        results.push('Mode Production');\n    }\n    if (metadata.ss_mode === \"MAINTENANCE\") {\n        results.push('Mode Maintenance');\n    }\n    return results;\n}\n\nreturn nextRelation(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud renvoie \"failure\" si le device n'a pas été initialisé.",
+          "layoutX": 53,
+          "layoutY": 419
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Import previous data",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "mode",
+            "zoneId",
+            "zoneName"
+          ],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 54,
+          "layoutY": 252
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbMsgTypeFilterNode",
+        "name": "Only Attributes & Telemetry",
+        "debugMode": true,
+        "configuration": {
+          "messageTypes": [
+            "POST_ATTRIBUTES_REQUEST",
+            "POST_TELEMETRY_REQUEST"
+          ]
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1151,
+          "layoutY": 182
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split measures[0]",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    ts: msg[0].Timestamp * 1000,\n    values: {\n        hydroCarbonHeight: msg[0].HydroCarbonHeight,\n        temperature: msg[0].Temperature\n    }\n};\n\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 858,
+          "layoutY": 421
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split attributes and telemetry",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newTelemetry = msg.measures;\ndelete msg.measures;\nvar newAttributes = msg;\n\nreturn {msg: newTelemetry, metadata: newAttributes, msgType: msgType};"
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 5,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "toIndex": 11,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 11,
+        "type": "Mode Production"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 7,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 6,
+        "type": "Failure"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 8,
+        "type": "True"
+      },
+      {
+        "fromIndex": 10,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 0,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 10,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": [
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "574c3a80-6991-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1823,
+          "layoutY": 322,
+          "ruleChainNodeId": "rule-chain-node-17"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "5f0b1bb0-6991-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1822,
+          "layoutY": 419,
+          "ruleChainNodeId": "rule-chain-node-16"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "574c3a80-6991-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1830,
+          "layoutY": 626,
+          "ruleChainNodeId": "rule-chain-node-15"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "5f0b1bb0-6991-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1829,
+          "layoutY": 724,
+          "ruleChainNodeId": "rule-chain-node-14"
+        },
+        "type": "Success"
+      }
+    ]
+  }
+}

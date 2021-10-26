@@ -1,0 +1,203 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "DISRUPTIVE TECHNOLOGIES - Gateways : DATA",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 4,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 48,
+          "layoutY": 334
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Import previousData",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "xPos",
+            "yPos",
+            "zoneId",
+            "zoneName",
+            "zoneType"
+          ],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 323,
+          "layoutY": 436
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Initialise data",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "msg.xPos = 0.5;\nmsg.yPos = 0.5;\nmsg.zoneId = \"\";\nmsg.zoneName = \"\";\nmsg.zoneType = \"\";\n\nreturn {msg: initAttributes, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1027,
+          "layoutY": 191
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "cellularStatus",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1023,
+          "layoutY": 333
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "connectionStatus",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 50,
+          "layoutY": 235
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbMsgTypeFilterNode",
+        "name": "Only Post Attributes",
+        "debugMode": true,
+        "configuration": {
+          "messageTypes": [
+            "POST_ATTRIBUTES_REQUEST",
+            "POST_TELEMETRY_REQUEST"
+          ]
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 646,
+          "layoutY": 334
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "msgType switch",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextRelation(metadata, msg) {\n    var results = []; \n    if (msg.msgType === \"connectionStatus\") {\n        results.push('connectionStatus');\n    }\n    if (msg.msgType === \"cellularStatus\") {\n        results.push('cellularStatus');\n    }\n    if (msg.msgType === \"ethernetStatus\") {\n        results.push('ethernetStatus');\n    }\n    return results;\n}\n\nreturn nextRelation(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1019,
+          "layoutY": 488
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "ethernetStatus",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Failure"
+      },
+      {
+        "fromIndex": 0,
+        "toIndex": 5,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 5,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 0,
+        "type": "True"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 3,
+        "type": "connectionStatus"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 6,
+        "type": "ethernetStatus"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 2,
+        "type": "cellularStatus"
+      }
+    ],
+    "ruleChainConnections": [
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "42b39280-0df7-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1323,
+          "layoutY": 217,
+          "ruleChainNodeId": "rule-chain-node-9"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "42b39280-0df7-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1322,
+          "layoutY": 381,
+          "ruleChainNodeId": "rule-chain-node-10"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "42b39280-0df7-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1323,
+          "layoutY": 544,
+          "ruleChainNodeId": "rule-chain-node-11"
+        },
+        "type": "Success"
+      }
+    ]
+  }
+}

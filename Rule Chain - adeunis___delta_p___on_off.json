@@ -1,0 +1,162 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "ADEUNIS - Delta P : ON/OFF",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 4,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 660,
+          "layoutY": 566
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Capteur actif ?",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextRelation(metadata, msg) {\n    var results = [];\n    var lastMsgTs = parseInt(metadata.ss_ts);\n    var thisMsgTs = parseInt(msg.ts);\n    var ecartDetection = parseInt(lastMsgTs - thisMsgTs);\n    if(ecartDetection === 0) {\n        results.push(\"Capteur inactif\");\n    } else {\n        results.push(\"Capteur actif\");\n    }\n    return results;\n}\nreturn nextRelation(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud enregistre la nouvelle valeur de l'indicator dans les attributs, et transmet le message vers la télémétrie.",
+          "layoutX": 665,
+          "layoutY": 858
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save indicator=\"OFF\" in Attributes",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud change l'indicator de \"ON\" à \"OFF\".",
+          "layoutX": 660,
+          "layoutY": 718
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Change to \"OFF\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    indicator: \"OFF\"\n};\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud permet de retarder le message de 3 jours afin de changer le statut du device d'actif à inactif.",
+          "layoutX": 655,
+          "layoutY": 304
+        },
+        "type": "org.thingsboard.rule.engine.delay.TbMsgDelayNode",
+        "name": "Wait 3j",
+        "debugMode": true,
+        "configuration": {
+          "useMetadataPeriodInSecondsPatterns": false,
+          "periodInSeconds": 259200,
+          "periodInSecondsPattern": null,
+          "maxPendingMsgs": 100000
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce noeud permet de renvoyer le message entrant vers la Rule chain \"alarms\" et de lancer en parallèle le compte à rebours du ON/OFF.",
+          "layoutX": 351,
+          "layoutY": 149
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Incoming message router",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "return {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce noeud charge le timestamp du dernier message arrivé.",
+          "layoutX": 658,
+          "layoutY": 434
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Importe le timestamp du dernier message reçu",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "ts"
+          ],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 2,
+        "type": "Capteur inactif"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 5,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 0,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": [
+      {
+        "fromIndex": 1,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "2073d030-032b-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 669,
+          "layoutY": 987,
+          "ruleChainNodeId": "rule-chain-node-9"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 4,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "2073d030-032b-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 654,
+          "layoutY": 28,
+          "ruleChainNodeId": "rule-chain-node-8"
+        },
+        "type": "Success"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1063 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "ADEUNIS - Delta P : DATA (1/2)",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 26,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 580,
+          "layoutY": 908
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save telemetry initialisation",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 536,
+          "layoutY": 1034
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "attributes initialisation message",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var attributesInit = metadata;\n\nreturn {msg: attributesInit, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2078,
+          "layoutY": 846
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save 0x54 telemetry",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1777,
+          "layoutY": 1531
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save 0x53[i] telemetry",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1776,
+          "layoutY": 2075
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save 0x55[i] telemetry",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2074,
+          "layoutY": 2025
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "Check next index >= 0",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "return metadata.i >= 0;"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2081,
+          "layoutY": 1490
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "Check next index >= 0",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "return metadata.i >= 0;"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud permet de sauvegarder les valeurs qui seront utilisées par la Rule Chain Data (2/2)",
+          "layoutX": 2080,
+          "layoutY": 1399
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Save next values in metadata",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var pressureValuesLength = msg.pressureValuesArray.length;\nvar deltaTs = parseInt(metadata.ss_pressureCalculatedPeriodRecordingValue) * 1000;\n\nvar newMsg = {};\n\nvar newMetadata = {\n    \"i\": pressureValuesLength - 1,\n    \"msgType\": \"Boucles - 0x53 Delta P periodic data\",\n    \"pressureValuesArray\": msg.pressureValuesArray.toString(),\n    \"ts\": msg.ts,\n    \"deltaTs\": deltaTs,\n    \"pressureUnit\": msg.pressureUnit\n};\n\nreturn {msg: newMsg, metadata: newMetadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1771,
+          "layoutY": 1402
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Import pressureCalculatedPeriodRecordingValue",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "pressureCalculatedPeriodRecordingValue"
+          ],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1766,
+          "layoutY": 1902
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Import voltageCalculatedPeriodRecordingValue",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "voltageCalculatedPeriodRecordingValue",
+            "clamp"
+          ],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2076,
+          "layoutY": 1063
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save 0x56 telemetry",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2078,
+          "layoutY": 964
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x56 attributes",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1768,
+          "layoutY": 1062
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Create telemetry message",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "return {msg: msg, metadata: metadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1768,
+          "layoutY": 965
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Create attributes message",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newAttributes = metadata;\n\nreturn {msg: newAttributes, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1471,
+          "layoutY": 1017
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split attributes & telemetry in metadata",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newTelemetry = {\n    \"ts\": msg.ts,\n    \"values\": msg.values\n};\n\ndelete msg.values;\n\nvar newAttributes = msg;\n\nreturn {msg: newTelemetry, metadata: newAttributes, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud permet de supprimer les données télémétriques et ne conserve que les données à stocker dans les attributs.",
+          "layoutX": 1766,
+          "layoutY": 1188
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Attributes",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "delete msg.msgType;\ndelete msg.pressureValuesArray;\ndelete msg.pressureUnit;\n\nvar newAttributes = msg;\n\nreturn {msg: newAttributes, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Enregistre les attributs de l'objet.",
+          "layoutX": 2077,
+          "layoutY": 1184
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x53 attributes",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud permet de dissocier les valeurs devant être stockées dans les metadata pour les prochains enregistrements, et les données (attributs et télémétrie) à enregistrer dès ce tour de rule chain. La distinction entre attributs et télémétrie se fera dans les prochains nœuds.",
+          "layoutX": 1475,
+          "layoutY": 1299
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "return;",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "return {msg: msg, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1476,
+          "layoutY": 693
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x52",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1475,
+          "layoutY": 577
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x51",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1472,
+          "layoutY": 470
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x2f",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1474,
+          "layoutY": 361
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x20",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1473,
+          "layoutY": 257
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x1f",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1473,
+          "layoutY": 141
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x11",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1472,
+          "layoutY": 42
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x10",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Cette fonction retournera un array contenant le nom des nœuds où doivent être transmis les msg.",
+          "layoutX": 893,
+          "layoutY": 696
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Switch selon type de trame",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextNodes(metadata, msg) {\n    var results = []; // tableau des noms des prochains noeuds\n    if(msg.msgType === \"0x10 Delta P configuration\") {\n        results.push(\"0x10 Delta P configuration\");\n    }\n    if(msg.msgType === \"0x11 Delta P 0-10V configuration\") {\n        results.push(\"0x11 Delta P 0-10V configuration\");\n    } \n    if(msg.msgType === \"0x1f digital input configuration\") {\n        results.push(\"0x1f digital input configuration\");\n    }\n    if(msg.msgType === \"0x20 Configuration\") {\n        results.push(\"0x20 Configuration\");\n    }\n    if(msg.msgType === \"0x2f Delta P Downlink ack\") {\n        results.push(\"0x2f Delta P Downlink ack\");\n    }\n    if(msg.msgType === \"0x51 digital input 1 alarm\") {\n        results.push('Seuil de maintenance dépassé');\n    }\n    if(msg.msgType === \"0x52 digital input 2 alarm\") {\n        results.push(\"0x52 digital input 2 alarm\");\n    }\n    if(msg.msgType === \"0x53 Delta P periodic data\") {\n        results.push(\"0x53 Delta P periodic data\");\n    }\n    if(metadata.msgType === \"Boucles - 0x53 Delta P periodic data\") {\n        results.push(\"Boucles - 0x53 Delta P periodic data\");\n    }\n    if(msg.msgType === \"0x54 Delta P alarm\"){\n        results.push(\"0x54 Delta P alarm\");\n    }\n    if(msg.msgType === \"0x55 Delta P - periodic 0-10 V\"){\n        results.push(\"0x55 Delta P - periodic 0-10 V\");\n    }\n    if(metadata.msgType === \"Boucles - 0x55 Delta P - periodic 0-10 V\") {\n        results.push(\"Boucles - 0x55 Delta P - periodic 0-10 V\");\n    }\n    if(msg.msgType === \"0x56 Delta P - alarm 0-10 V\"){\n        results.push(\"0x56 Delta P - alarm 0-10 V\");\n    }\n    return results;\n}\n\nreturn nextNodes(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 44,
+          "layoutY": 271
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbMsgTypeFilterNode",
+        "name": "Only Post Attributes & Post Telemetry",
+        "debugMode": true,
+        "configuration": {
+          "messageTypes": [
+            "POST_ATTRIBUTES_REQUEST",
+            "POST_TELEMETRY_REQUEST"
+          ]
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Enregistre les attributs de l'objet.",
+          "layoutX": 2080,
+          "layoutY": 1654
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x55 attributes",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud permet de dissocier les valeurs devant être stockées dans les metadata pour les prochains enregistrements, et les données (attributs et télémétrie) à enregistrer dès ce tour de rule chain. La distinction entre attributs et télémétrie se fera dans les prochains nœuds.",
+          "layoutX": 1468,
+          "layoutY": 1805
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "return;",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "return {msg: msg, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud vérifie que le Delta P soit en mode \"PROD\".",
+          "layoutX": 578,
+          "layoutY": 699
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Check Device Mode",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextNodes(metadata, msg) {\n    var results = []; // tableau des noms des prochains noeuds\n    if(metadata.ss_mode === \"PROD\") {\n        results.push(\"Mode production\");\n    } else if (metadata.ss_mode === \"MAINTENANCE\") {\n        results.push(\"Mode maintenance\");\n    }\n    return results;\n}\n\nreturn nextNodes(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud renvoie \"failure\" si le device n'a pas encore été initialisé.",
+          "layoutX": 26,
+          "layoutY": 699
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Import previous data",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "mode",
+            "xPos",
+            "yPos",
+            "commentaires",
+            "referenceMoteur",
+            "referenceCourroie",
+            "etatCourroie",
+            "zoneId",
+            "zoneName",
+            "alertValueLow",
+            "alertValueHigh",
+            "breakdownTiming"
+          ],
+          "latestTsKeyNames": [
+            "pressureValue",
+            "voltageValue",
+            "pressureBreakdown",
+            "firstZeroVoltageTs",
+            "voltageBreakdown",
+            "firstLowPressureTs"
+          ],
+          "getLatestValueWithTs": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 266,
+          "layoutY": 909
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Messages d'initialisation",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var telemetryInit = {\n    \"pressureValue\": 0,\n    \"pressureUnit\": \"pa\",\n    \"voltageValue\": 0,\n    \"voltageUnit\": \"mV\",\n    \"firstLowPressureTs\": msg.ts,\n    \"firstZeroVoltageTs\": msg.ts,\n    \"pressureBreakdown\": false,\n    \"voltageBreakdown\": false\n};\n\nvar attributesInit = {\n    \"clamp\": 50,\n    \"xPos\": 0.5,\n    \"yPos\": 0.5,\n    \"indicator\": \"ON\",\n    \"mode\": \"PROD\",\n    \"alertValueHigh\": 80,\n    \"alertValueLow\": 10,\n    \"breakdownTiming\": 48,\n    \"commentaires\": \"n.c.\",\n    \"referenceMoteur\": \"n.c.\",\n    \"referenceCourroie\": \"n.c.\",\n    \"etatCourroie\": \"n.c.\",\n    \"zoneId\": \"\",\n    \"zoneName\": \"\",\n    \"voltageNumberOfHistorizationBeforeSending\": 5,\n    \"voltageNumberOfSamplingBeforeHistorization\": 6,\n    \"voltageSamplingPeriodUnit\": \"s\",\n    \"voltageSamplingPeriodValue\": 600,\n    \"voltageCalculatedPeriodRecordingUnit\": \"s\",\n    \"voltageCalculatedPeriodRecordingValue\": 3600,\n    \"voltageCalculatedSendingPeriod\": \"s\",\n    \"voltageCalculatedSendingPeriodValue\": 18000,\n    \"transmissionPeriodKeepAliveUnit\": \"s\",\n    \"transmissionPeriodKeepAliveValue\": 86400,\n    \"pressureNumberOfHistorizationBeforeSending\": 5,\n    \"pressureNumberOfSamplingBeforeHistorization\": 6,\n    \"pressureSamplingPeriodUnit\": \"s\",\n    \"pressureSamplingPeriodValue\": 600,\n    \"pressureCalculatedPeriodRecordingUnit\": \"s\",\n    \"pressureCalculatedPeriodRecordingValue\": 3600,\n    \"pressureCalculatedSendingPeriodUnit\": \"s\",\n    \"pressureCalculatedSendingPeriodValue\": 18000\n};\n\nif (msg.msgType === \"0x10 Delta P configuration\") {\n    attributesInit.transmissionPeriodKeepAliveUnit = msg.transmissionPeriodKeepAliveUnit;\n    attributesInit.transmissionPeriodKeepAliveValue = msg.transmissionPeriodKeepAliveValue;\n    attributesInit.pressureNumberOfHistorizationBeforeSending = msg.pressureNumberOfHistorizationBeforeSending;\n    attributesInit.pressureNumberOfSamplingBeforeHistorization = msg.pressureNumberOfSamplingBeforeHistorization;\n    attributesInit.pressureSamplingPeriodUnit = msg.pressureSamplingPeriodUnit;\n    attributesInit.pressureSamplingPeriodValue = msg.pressureSamplingPeriodValue;\n    attributesInit.pressureCalculatedPeriodRecordingUnit = msg.pressureCalculatedPeriodRecordingUnit;\n    attributesInit.pressureCalculatedPeriodRecordingValue = msg.pressureCalculatedPeriodRecordingValue;\n    attributesInit.pressureCalculatedSendingPeriodUnit = msg.pressureCalculatedSendingPeriodUnit;\n    attributesInit.pressureCalculatedSendingPeriodValue = msg.pressureCalculatedSendingPeriodValue;\n}\nif (msg.msgType === \"0x11 Delta P 0-10V configuration\") {\n    attributesInit.voltageNumberOfHistorizationBeforeSending = msg.voltageNumberOfHistorizationBeforeSending;\n    attributesInit.voltageNumberOfSamplingBeforeHistorization = msg.voltageNumberOfSamplingBeforeHistorization;\n    attributesInit.voltageSamplingPeriodUnit = msg.voltageSamplingPeriodUnit;\n    attributesInit.voltageSamplingPeriodValue = msg.voltageSamplingPeriodValue;\n    attributesInit.voltageCalculatedPeriodRecordingUnit = msg.voltageCalculatedPeriodRecordingUnit;\n    attributesInit.voltageCalculatedPeriodRecordingValue = msg.voltageCalculatedPeriodRecordingValue;\n    attributesInit.voltageCalculatedSendingPeriod = msg.voltageCalculatedSendingPeriod;\n    attributesInit.voltageCalculatedSendingPeriodValue = msg.voltageCalculatedSendingPeriodValue;\n}\n\nreturn {msg: telemetryInit, metadata: attributesInit, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 835,
+          "layoutY": 1035
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save attributes initialisation",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1480,
+          "layoutY": 1532
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Create 0x53 msg[i]",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var thisIndex = parseInt(metadata.i);\r\nvar thisTs = parseInt(metadata.ts) - parseInt(metadata.deltaTs) * thisIndex;\r\nvar lastFirstLowPressureTs = parseInt(metadata.firstLowPressureTs);\r\nvar alertValueLow = parseInt(metadata.ss_alertValueLow);\r\nvar nextIndex = thisIndex - 1;\r\nvar pressureValues = metadata.pressureValuesArray.split(',').map(Number);\r\nvar currentPressureValue = parseInt(pressureValues[thisIndex]);\r\nvar lastPressureValue = parseInt(metadata.pressureValue);\r\nvar breakdownTiming = parseInt(metadata.ss_breakdownTiming);\r\n\r\nvar isLowPressure = checkIfIsLowPressure(currentPressureValue, alertValueLow);\r\nvar wasLowPressure = checkIfWasLowPressure(lastPressureValue, alertValueLow);\r\nvar newFirstLowPressureTs = getFirstLowPressureTs(isLowPressure, wasLowPressure, thisTs, lastFirstLowPressureTs);\r\nvar pressureBreakdown = checkIfBreakdown(isLowPressure, thisTs, newFirstLowPressureTs, breakdownTiming);\r\n\r\nvar newMsg = {\r\n    \"ts\": thisTs,\r\n    \"values\": {\r\n        \"pressureUnit\": metadata.pressureUnit,\r\n        \"pressureValue\": pressureValues[thisIndex],\r\n        \"firstLowPressureTs\": newFirstLowPressureTs,\r\n        \"pressureBreakdown\": pressureBreakdown\r\n    }\r\n  };\r\n\r\nfunction checkIfIsLowPressure(currentPressureValue, alertValueLow) {\r\n    if(currentPressureValue <= alertValueLow) {\r\n        return true;\r\n    } else {\r\n        return false;\r\n    }\r\n}\r\n\r\nfunction checkIfWasLowPressure(lastPressureValue, alertValueLow) {\r\n    if(lastPressureValue <= alertValueLow) {\r\n        return true;\r\n    } else {\r\n        return false;\r\n    }\r\n}\r\n\r\nfunction getFirstLowPressureTs(isLowPressure, wasLowPressure, thisTs, firstLowPressureTs) {\r\n    if(isLowPressure === false) {\r\n        return 0;\r\n    } else if(isLowPressure === true && wasLowPressure === false) {\r\n        return thisTs;\r\n    } else {\r\n        return firstLowPressureTs;\r\n    }\r\n}\r\n\r\nfunction checkIfBreakdown(isLowPressure, thisTs, firstLowPressureTs, breakdownTiming) {\r\n    var breakdownTimingInMs = breakdownTiming * 3600 * 1000;\r\n    if(isLowPressure === true && (thisTs - firstLowPressureTs >= breakdownTimingInMs)) {\r\n        return true;\r\n    } else {\r\n        return false;\r\n    }\r\n}\r\n\r\nmetadata.i = nextIndex;\r\n\r\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1470,
+          "layoutY": 2076
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Create 0x55 msg[i]",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var thisIndex = parseInt(metadata.i);\r\nvar thisTs = parseInt(metadata.ts) - parseInt(metadata.deltaTs) * thisIndex;\r\nvar lastFirstZeroVoltageTs = parseInt(metadata.firstZeroVoltageTs);\r\nvar nextIndex = thisIndex - 1;\r\nvar voltageValues = metadata.voltageValuesArray.split(',').map(Number);\r\nvar currentVoltageValue = parseFloat(voltageValues[thisIndex]);\r\nvar lastVoltageValue = parseFloat(metadata.voltageValue);\r\nvar breakdownTiming = parseInt(metadata.ss_breakdownTiming);\r\n\r\nvar isZeroVoltage = checkIfIsZeroVoltage(currentVoltageValue);\r\nvar wasZeroVoltage = checkIfWasZeroVoltage(lastVoltageValue);\r\nvar newFirstZeroVoltageTs = getFirstZeroVoltageTs(isZeroVoltage, wasZeroVoltage, thisTs, lastFirstZeroVoltageTs);\r\nvar voltageBreakdown = checkIfBreakdown(isZeroVoltage, thisTs, newFirstZeroVoltageTs, breakdownTiming);\r\n\r\nvar newMsg = {\r\n    \"ts\": thisTs,\r\n    \"values\": {\r\n        \"voltageUnit\": metadata.voltageUnit,\r\n        \"voltageValue\": voltageValues[thisIndex],\r\n        \"firstZeroVoltageTs\": newFirstZeroVoltageTs,\r\n        \"voltageBreakdown\": voltageBreakdown\r\n    }\r\n  };\r\n\r\nfunction checkIfIsZeroVoltage(currentVoltageValue) {\r\n    if(currentVoltageValue === 0) {\r\n        return true;\r\n    } else {\r\n        return false;\r\n    }\r\n}\r\n\r\nfunction checkIfWasZeroVoltage(lastVoltageValue) {\r\n    if(lastVoltageValue === 0) {\r\n        return true;\r\n    } else {\r\n        return false;\r\n    }\r\n}\r\n\r\nfunction getFirstZeroVoltageTs(isZeroVoltage, wasZeroVoltage, thisTs, firstZeroVoltageTs) {\r\n    if(isZeroVoltage === false) {\r\n        return 0;\r\n    } else if(isZeroVoltage === true && wasZeroVoltage === false) {\r\n        return thisTs;\r\n    } else {\r\n        return firstZeroVoltageTs;\r\n    }\r\n}\r\n\r\nfunction checkIfBreakdown(isZeroVoltage, thisTs, firstZeroVoltageTs, breakdownTiming) {\r\n    var breakdownTimingInMs = breakdownTiming * 3600 * 1000;\r\n    if(isZeroVoltage === true && (thisTs - firstZeroVoltageTs >= breakdownTimingInMs)) {\r\n        return true;\r\n    } else {\r\n        return false;\r\n    }\r\n}\r\n\r\nmetadata.i = nextIndex;\r\n\r\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1769,
+          "layoutY": 846
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Create telemetry message",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "return {msg: msg, metadata: metadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2078,
+          "layoutY": 775
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x54 attributes",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1768,
+          "layoutY": 776
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Create attributes message",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newAttributes = metadata;\n\nreturn {msg: newAttributes, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1471,
+          "layoutY": 828
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split attributes & telemetry in metadata",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newTelemetry = {\n    \"ts\": msg.ts,\n    \"values\": msg.values\n};\n\ndelete msg.values;\n\nvar newAttributes = msg;\n\nreturn {msg: newTelemetry, metadata: newAttributes, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Ce nœud permet de supprimer les données télémétriques et ne conserve que les données à stocker dans les attributs.",
+          "layoutX": 1767,
+          "layoutY": 1656
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Attributes",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "delete msg.msgType;\ndelete msg.voltageValuesArray;\ndelete msg.voltageUnit;\n\nvar newAttributes = msg;\n\nreturn {msg: newAttributes, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2075,
+          "layoutY": 1903
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Save next values in metadata",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var voltageValuesLength = msg.voltageValuesArray.length;\nvar deltaTs = parseInt(metadata.ss_voltageCalculatedPeriodRecordingValue) * 1000;\n\nvar newMsg = {};\n\nvar clampInt = parseInt(metadata.ss_clamp);\n\nfunction voltageConverter(valuesArray, valuesUnit, clampInt) {\n    for(var i=0; i<valuesArray.length; i++) {\n        if(valuesUnit === \"mV\") {\n            valuesArray[i] = valuesArray[i] * clampInt / 10000;\n        } else if (valuesUnit === \"V\") {\n            valuesArray[i] = valuesArray[i] * clampInt / 10;\n        }\n    }\n    return valuesArray;\n}\n\nvar newVoltageArray = voltageConverter(msg.voltageValuesArray, msg.voltageUnit, clampInt).toString();\n\n\nvar newMetadata = {\n    \"i\": voltageValuesLength - 1,\n    \"msgType\": \"Boucles - 0x55 Delta P - periodic 0-10 V\",\n    \"voltageValuesArray\": newVoltageArray,\n    \"ts\": msg.ts,\n    \"deltaTs\": deltaTs\n};\n\nreturn {msg: newMsg, metadata: newMetadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 1,
+        "toIndex": 32,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 6,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 5,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 7,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 40,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 12,
+        "toIndex": 10,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 13,
+        "toIndex": 11,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 14,
+        "toIndex": 13,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 14,
+        "toIndex": 12,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 15,
+        "toIndex": 16,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 17,
+        "toIndex": 8,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 17,
+        "toIndex": 15,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 17,
+        "type": "0x53 Delta P periodic data"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 34,
+        "type": "Boucles - 0x55 Delta P - periodic 0-10 V"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 14,
+        "type": "0x56 Delta P - alarm 0-10 V"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 28,
+        "type": "0x55 Delta P - periodic 0-10 V"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 38,
+        "type": "0x54 Delta P alarm"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 24,
+        "type": "0x10 Delta P configuration"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 23,
+        "type": "0x11 Delta P 0-10V configuration"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 22,
+        "type": "0x1f digital input configuration"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 21,
+        "type": "0x20 Configuration"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 20,
+        "type": "0x2f Delta P Downlink ack"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 19,
+        "type": "0x51 digital input 1 alarm"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 18,
+        "type": "0x52 digital input 2 alarm"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 33,
+        "type": "Boucles - 0x53 Delta P periodic data"
+      },
+      {
+        "fromIndex": 26,
+        "toIndex": 30,
+        "type": "True"
+      },
+      {
+        "fromIndex": 28,
+        "toIndex": 39,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 28,
+        "toIndex": 9,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 29,
+        "toIndex": 25,
+        "type": "Mode production"
+      },
+      {
+        "fromIndex": 30,
+        "toIndex": 31,
+        "type": "Failure"
+      },
+      {
+        "fromIndex": 30,
+        "toIndex": 29,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 31,
+        "toIndex": 0,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 31,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 33,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 34,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 35,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 37,
+        "toIndex": 36,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 38,
+        "toIndex": 37,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 38,
+        "toIndex": 35,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 39,
+        "toIndex": 27,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": [
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ee37e20-0329-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2369,
+          "layoutY": 846,
+          "ruleChainNodeId": "rule-chain-node-61"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ee37e20-0329-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2080,
+          "layoutY": 1569,
+          "ruleChainNodeId": "rule-chain-node-60"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 4,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ee37e20-0329-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2074,
+          "layoutY": 2122,
+          "ruleChainNodeId": "rule-chain-node-59"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "dfae5410-716d-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2370,
+          "layoutY": 2025,
+          "ruleChainNodeId": "rule-chain-node-58"
+        },
+        "type": "True"
+      },
+      {
+        "fromIndex": 6,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "dfae5410-716d-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2376,
+          "layoutY": 1488,
+          "ruleChainNodeId": "rule-chain-node-57"
+        },
+        "type": "True"
+      },
+      {
+        "fromIndex": 7,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "dfae5410-716d-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2369,
+          "layoutY": 1398,
+          "ruleChainNodeId": "rule-chain-node-56"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 10,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ee37e20-0329-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2368,
+          "layoutY": 1062,
+          "ruleChainNodeId": "rule-chain-node-55"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ee37e20-0329-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2367,
+          "layoutY": 964,
+          "ruleChainNodeId": "rule-chain-node-54"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 16,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ee37e20-0329-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2368,
+          "layoutY": 1182,
+          "ruleChainNodeId": "rule-chain-node-53"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 18,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ee37e20-0329-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1782,
+          "layoutY": 687,
+          "ruleChainNodeId": "rule-chain-node-52"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 19,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ee37e20-0329-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1780,
+          "layoutY": 581,
+          "ruleChainNodeId": "rule-chain-node-51"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 20,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ee37e20-0329-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1782,
+          "layoutY": 466,
+          "ruleChainNodeId": "rule-chain-node-50"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 21,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ee37e20-0329-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1782,
+          "layoutY": 358,
+          "ruleChainNodeId": "rule-chain-node-49"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 22,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ee37e20-0329-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1783,
+          "layoutY": 259,
+          "ruleChainNodeId": "rule-chain-node-48"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 23,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ee37e20-0329-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1780,
+          "layoutY": 144,
+          "ruleChainNodeId": "rule-chain-node-47"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 24,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ee37e20-0329-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1782,
+          "layoutY": 42,
+          "ruleChainNodeId": "rule-chain-node-46"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 27,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ee37e20-0329-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2372,
+          "layoutY": 1654,
+          "ruleChainNodeId": "rule-chain-node-45"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 36,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ee37e20-0329-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2369,
+          "layoutY": 774,
+          "ruleChainNodeId": "rule-chain-node-44"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 40,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "dfae5410-716d-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 2369,
+          "layoutY": 1899,
+          "ruleChainNodeId": "rule-chain-node-43"
+        },
+        "type": "Success"
+      }
+    ]
+  }
+}

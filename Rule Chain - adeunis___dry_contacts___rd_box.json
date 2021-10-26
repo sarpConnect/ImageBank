@@ -1,0 +1,325 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "ADEUNIS - Dry Contacts : RD BOX",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 5,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "Ce nœud renvoie \"failure\" s'il s'agit du premier message 0x40 reçu par le device. Sinon, il renvoie \"success\".",
+          "layoutX": 503,
+          "layoutY": 478
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Import lastDataMessageTs",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "lastDataMessageTs"
+          ],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1409,
+          "layoutY": 558
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x40 attributes",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1110,
+          "layoutY": 560
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Create attributes message",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = metadata;\n\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1108,
+          "layoutY": 397
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save 0x40 telemetry",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 819,
+          "layoutY": 479
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split attributes and telemetry",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "// Fonctions utilisées dans ce script\r\n\r\n    // Etape 2 : Vérifier que la dernière détection a eu lieu il y a plus de 10 minutes\r\n    function lessThanTenMinutes(currentTimestamp, previousTimestamp){\r\n        var currentTimestampNumber = parseInt(currentTimestamp);\r\n        var previousTimestampNumber = parseInt(previousTimestamp);\r\n        var result = false;\r\n        // if(currentTimestampNumber - previousTimestampNumber <= 600000){\r\n        //     result = true;\r\n        // }\r\n        return result;\r\n    }\r\n\r\n    // Etape 3 : Etudier le timestamp du message pour incrémenter les compteurs matin/apresmidi/soir/nuit\r\n    function dateToLocalUnixTimestamp(timestamp){\r\n        var localUnixTimeStamp = +new Date(timestamp);\r\n        return localUnixTimeStamp;\r\n    }\r\n\r\n    function timeConverter(UNIX_timestamp){\r\n        var a = new Date(UNIX_timestamp);\r\n        var months = ['Janvier','Févier','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];\r\n        var days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];\r\n        var year = a.getFullYear();\r\n        var month = months[a.getMonth()];\r\n        var day = days[a.getDay()];\r\n        var date = a.getDate() < 10 ? '0' + a.getDate() : a.getDate();\r\n        var hour = a.getHours() < 10 ? '0' + a.getHours() : a.getHours();\r\n        var min = a.getMinutes() < 10 ? '0' + a.getMinutes() : a.getMinutes();\r\n        var sec = a.getSeconds() < 10 ? '0' + a.getSeconds() : a.getSeconds();\r\n        var time = day + ' ' + date + ' ' + month + ' ' + year + ' - ' + hour + ':' + min + ':' + sec ;\r\n        return time;\r\n    }\r\n\r\n    function getHour(currentTimestamp){\r\n        var currentTimestampNumber = parseInt(currentTimestamp);\r\n        var localCurrentTimestamp = dateToLocalUnixTimestamp(currentTimestampNumber);\r\n        var a = new Date(localCurrentTimestamp);\r\n        var hour = a.getHours();\r\n        return hour;\r\n    }\r\n\r\n    function getDate(currentTimestamp){\r\n        var currentTimestampNumber = parseInt(currentTimestamp);\r\n        var localCurrentTimestamp = dateToLocalUnixTimestamp(currentTimestampNumber);\r\n        var date = timeConverter(localCurrentTimestamp);\r\n        return date;\r\n    }\r\n\r\n    function giveTimeOfDay(currentTimestamp){\r\n        var currentTimestampNumber = parseInt(currentTimestamp);\r\n        var hour = getHour(currentTimestampNumber);\r\n        var result = \"\";\r\n        if (hour < 6){\r\n            result = \"nuit\";\r\n        } else if (hour >= 6 && hour < 12){\r\n            result = \"matin\";\r\n        } else if (hour >= 12 && hour < 18){\r\n            result = \"après-midi\";\r\n        } else if (hour >= 18){\r\n            result = \"soir\";\r\n        }\r\n        return result;\r\n    }\r\n\r\n    // Etape 5 : Vérifier que le message entrant correspond à une détection sur chaque TOR\r\n    function isDetection(msg, metadata, channelCurrentState, channelPreviousState){\r\n        var isLessThanTenMinutes = lessThanTenMinutes(msg.lastDataMessageTs, metadata.ss_lastDataMessageTs);\r\n        var result = false;\r\n        if(isLessThanTenMinutes === false && channelCurrentState === true && channelPreviousState === false){\r\n            result = true;\r\n        }\r\n        return result;\r\n    }\r\n\r\n\r\n    // Etape 4 : Créer le message sortant (pour l'instant, on n'utilise pas les channels B, C, D)\r\n    function createMsgOutput(msg, metadata){\r\n        var isDetectionOnChannelA = isDetection(msg, metadata, msg.channelACurrentState, msg.channelAPreviousFrameState);\r\n        // var isDetectionOnChannelB = isDetection(msg, metadata, msg.channelBCurrentState, msg.channelBPreviousFrameState);\r\n        // var isDetectionOnChannelC = isDetection(msg, metadata, msg.channelCCurrentState, msg.channelCPreviousFrameState);\r\n        // var isDetectionOnChannelD = isDetection(msg, metadata, msg.channelDCurrentState, msg.channelDPreviousFrameState);\r\n        var timeOfDay = giveTimeOfDay(msg.lastDataMessageTs);\r\n        var newMsg = {\r\n            \"ts\": msg.lastDataMessageTs,\r\n            \"values\": {\r\n                \"compteurA\": parseInt(metadata.compteurA),\r\n                \"compteurB\": parseInt(metadata.compteurB),\r\n                \"compteurC\": parseInt(metadata.compteurC),\r\n                \"compteurD\": parseInt(metadata.compteurD),\r\n                \"compteurReservoir\": parseInt(metadata.compteurReservoir),\r\n                \"matin\": parseInt(metadata.matin),\r\n                \"apresmidi\": parseInt(metadata.apresmidi),\r\n                \"soir\": parseInt(metadata.soir),\r\n                \"nuit\": parseInt(metadata.nuit)\r\n            }\r\n        };\r\n        if(isDetectionOnChannelA === true){\r\n            newMsg.values.compteurA ++;\r\n            newMsg.values.compteurReservoir ++;\r\n            newMsg.values.compteurGroupe = newMsg.values.compteurA;\r\n            if(timeOfDay === \"matin\"){\r\n                newMsg.values.matin ++;\r\n            } else if(timeOfDay === \"après-midi\"){\r\n                newMsg.values.apresmidi ++;\r\n            } else if(timeOfDay === \"soir\"){\r\n                newMsg.values.soir ++;\r\n            } else if(timeOfDay === \"nuit\"){\r\n                newMsg.values.nuit ++;\r\n            }\r\n        }\r\n        return newMsg;\r\n    }\r\n\r\n    // Etape 6 : Créer les metadata sortantes\r\n    function createNewMetadata(msg, metadata) {\r\n        var isDetectionOnChannelA = isDetection(msg, metadata, msg.channelACurrentState, msg.channelAPreviousFrameState);\r\n        var lastDetectionDate = getDate(msg.lastDataMessageTs);\r\n        var newMetadata = {\r\n                \"ts\": msg.ts,\r\n                \"lastMessage\": msg.lastMessage,\r\n                \"frameCounter\": msg.frameCounter,\r\n                \"hardwareError\": msg.hardwareError,\r\n                \"lowBattery\": msg.lowBattery,\r\n                \"configurationDone\": msg.configurationDone,\r\n                \"signalValue\": msg.signalValue,\r\n                \"msgType\": msg.msgType,\r\n                \"indicator\": msg.indicator,\r\n                \"decodingInfo\": msg.decodingInfo\r\n        };        \r\n        if(isDetectionOnChannelA === true) {\r\n            newMetadata.lastDataMessageTs = msg.lastDataMessageTs;\r\n            newMetadata.lastDetectionDate = lastDetectionDate;\r\n        }\r\n        return newMetadata;\r\n    }\r\n\r\nvar newMsg = createMsgOutput(msg, metadata);\r\nvar newMetadata = createNewMetadata(msg, metadata);\r\n\r\nreturn {msg: newMsg, metadata: newMetadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Cette fonction retournera un array contenant le nom des nœuds où doivent être transmis les msg.",
+          "layoutX": 46,
+          "layoutY": 266
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Switch selon msgType",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextNodes(metadata, msg) {\n    var results = []; // tableau des noms des prochains noeuds\n    if(msg.msgType === \"0x10 Dry Contacts configuration\") {\n        results.push(\"0x10 Dry Contacts configuration\");\n    }\n    if(msg.msgType === \"0x20 Configuration\") {\n        results.push(\"0x20 Configuration\");\n    }\n    if(msg.msgType === \"0x30 Keep alive\") {\n        results.push(\"0x30 Keep alive\");\n    }\n    if(msg.msgType === \"0x40 Dry Contacts data\") {\n        results.push(\"0x40 Dry Contacts data\");\n    }\n    return results;\n}\n\nreturn nextNodes(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 493,
+          "layoutY": 331
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x30",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 491,
+          "layoutY": 188
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x20",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 492,
+          "layoutY": 38
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x10",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 6,
+        "type": "0x30 Keep alive"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 7,
+        "type": "0x20 Configuration"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 8,
+        "type": "0x10 Dry Contacts configuration"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 0,
+        "type": "0x40 Dry Contacts data"
+      }
+    ],
+    "ruleChainConnections": [
+      {
+        "fromIndex": 1,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ac87e80-660c-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1702,
+          "layoutY": 592,
+          "ruleChainNodeId": "rule-chain-node-20"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "0acfafc0-0c67-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1701,
+          "layoutY": 520,
+          "ruleChainNodeId": "rule-chain-node-19"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ac87e80-660c-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1403,
+          "layoutY": 427,
+          "ruleChainNodeId": "rule-chain-node-18"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "0acfafc0-0c67-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1402,
+          "layoutY": 355,
+          "ruleChainNodeId": "rule-chain-node-17"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ac87e80-660c-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 829,
+          "layoutY": 364,
+          "ruleChainNodeId": "rule-chain-node-16"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "0acfafc0-0c67-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 828,
+          "layoutY": 292,
+          "ruleChainNodeId": "rule-chain-node-15"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ac87e80-660c-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 828,
+          "layoutY": 226,
+          "ruleChainNodeId": "rule-chain-node-14"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "0acfafc0-0c67-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 827,
+          "layoutY": 154,
+          "ruleChainNodeId": "rule-chain-node-13"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 8,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "1ac87e80-660c-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 827,
+          "layoutY": 81,
+          "ruleChainNodeId": "rule-chain-node-12"
+        },
+        "type": "Success"
+      },
+      {
+        "fromIndex": 8,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "0acfafc0-0c67-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 826,
+          "layoutY": 9,
+          "ruleChainNodeId": "rule-chain-node-11"
+        },
+        "type": "Success"
+      }
+    ]
+  }
+}

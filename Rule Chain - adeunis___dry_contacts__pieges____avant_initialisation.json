@@ -1,0 +1,195 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "ADEUNIS - Dry Contacts (PIEGES) : Avant initialisation",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 1,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 850,
+          "layoutY": 656
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x40 attributes",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Cette fonction retournera un array contenant le nom des nœuds où doivent être transmis les msg.",
+          "layoutX": 48,
+          "layoutY": 350
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Switch selon msgType",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextNodes(metadata, msg) {\n    var results = []; // tableau des noms des prochains noeuds\n    if(msg.msgType === \"0x10 Dry Contacts configuration\") {\n        results.push(\"0x10 Dry Contacts configuration\");\n    }\n    if(msg.msgType === \"0x20 Configuration\") {\n        results.push(\"0x20 Configuration\");\n    }\n    if(msg.msgType === \"0x30 Keep alive\") {\n        results.push(\"0x30 Keep alive\");\n    }\n    if(msg.msgType === \"0x40 Dry Contacts data\") {\n        results.push(\"0x40 Dry Contacts data\");\n    }\n    if(msg.msgType === \"Initialisation\") {\n        results.push(\"Initialisation\");\n    }\n    return results;\n}\n\nreturn nextNodes(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 499,
+          "layoutY": 505
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x30",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 497,
+          "layoutY": 352
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x20",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 500,
+          "layoutY": 216
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 0x10",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 500,
+          "layoutY": 69
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Messages d'Initialisation",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var telemetryInit = {\n    compteurA: 0,\n    compteurB: 0,\n    compteurC: 0,\n    compteurD: 0,\n    compteurReservoir: 0,\n    compteurGroupe: 0,\n    matin: 0,\n    apresmidi: 0,\n    soir: 0,\n    nuit: 0\n};\n\nvar attributesInit = {\n    xPos: 0.5,\n    yPos: 0.5,\n    indicator: \"ON\",\n    appat: \"Graines\",\n    mode: \"PROD\",\n    commentaires: \"n.c.\",\n    seuilAlerteReservoir: 8,\n    customAlarm: 0,\n    lastDataMessageTs: 0,\n    zoneName: \"\",\n    zoneId: \"\",\n    zoneType: \"\"\n};\n\nreturn {msg: telemetryInit, metadata: attributesInit, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 824,
+          "layoutY": 6
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save telemetry initialisation",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 825,
+          "layoutY": 120
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "attributes initialisation message",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var attributesInit = metadata;\n\nreturn {msg: attributesInit, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1150,
+          "layoutY": 121
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save attributes initialisation",
+        "debugMode": true,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 507,
+          "layoutY": 656
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Update attributes",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    \"ts\": msg.ts,\n    \"lastMessage\": msg.lastMessage,\n    \"frameCounter\": msg.frameCounter,\n    \"hardwareError\": msg.hardwareError,\n    \"lowBattery\": msg.lowBattery,\n    \"configurationDone\": msg.configurationDone,\n    \"signalValue\": msg.signalValue,\n    \"msgType\": msg.msgType,\n    \"indicator\": msg.indicator,\n    \"decodingInfo\": msg.decodingInfo,\n    \"lastDataMessageTs\": msg.lastDataMessageTs,\n};\n\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};"
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 1,
+        "toIndex": 2,
+        "type": "0x30 Keep alive"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 3,
+        "type": "0x20 Configuration"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 4,
+        "type": "0x10 Dry Contacts configuration"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 9,
+        "type": "0x40 Dry Contacts data"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 5,
+        "type": "Initialisation"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 6,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 7,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 8,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 0,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

@@ -1,0 +1,1108 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "ADEUNIS - Dry Contacts Divers : Alarms",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 29,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 577,
+          "layoutY": 405
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Changement statut TOR D",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.declenchements = prevDetails.declenchements + 1;\n} else {\n    details.declenchements = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Changement statut TOR D",
+          "severity": "MAJOR",
+          "propagate": true,
+          "relationTypes": []
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1241,
+          "layoutY": 406
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1518,
+          "layoutY": 407
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to String",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 960,
+          "layoutY": 408
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 2095,
+          "layoutY": 406
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de Changement statut TOR D",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1823,
+          "layoutY": 405
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Changement statut TOR D",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Dry Contact \"${label}\" (${deviceName}) - Changement statut TOR D",
+          "bodyTemplate": "Bonjour,\n\nLe Dry Contact  \"${label}\" (${deviceName}) signale un changement de statut sur le TOR D.  Le Dry Contact se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 576,
+          "layoutY": 334
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Changement statut TOR C",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.declenchements = prevDetails.declenchements + 1;\n} else {\n    details.declenchements = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Changement statut TOR C",
+          "severity": "MAJOR",
+          "propagate": true,
+          "relationTypes": []
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1240,
+          "layoutY": 335
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1517,
+          "layoutY": 336
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to String",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 959,
+          "layoutY": 337
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 2094,
+          "layoutY": 335
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de Changement statut TOR C",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1822,
+          "layoutY": 334
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Changement statut TOR C",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Dry Contact \"${label}\" (${deviceName}) - Changement statut TOR C",
+          "bodyTemplate": "Bonjour,\n\nLe Dry Contact  \"${label}\" (${deviceName}) signale un changement de statut sur le TOR C.  Le Dry Contact se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 575,
+          "layoutY": 249
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Changement statut TOR B",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.declenchements = prevDetails.declenchements + 1;\n} else {\n    details.declenchements = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Changement statut TOR B",
+          "severity": "MAJOR",
+          "propagate": true,
+          "relationTypes": []
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1239,
+          "layoutY": 250
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1516,
+          "layoutY": 251
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to String",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 958,
+          "layoutY": 252
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 2093,
+          "layoutY": 250
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de Changement statut TOR B",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1821,
+          "layoutY": 249
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Changement statut TOR B",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Dry Contact \"${label}\" (${deviceName}) - Changement statut TOR B",
+          "bodyTemplate": "Bonjour,\n\nLe Dry Contact  \"${label}\" (${deviceName}) signale un changement de statut sur le TOR B.  Le Dry Contact se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 572,
+          "layoutY": 157
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Changement statut TOR A",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.declenchements = prevDetails.declenchements + 1;\n} else {\n    details.declenchements = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Changement statut TOR A",
+          "severity": "MAJOR",
+          "propagate": true,
+          "relationTypes": []
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1236,
+          "layoutY": 158
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1513,
+          "layoutY": 159
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to String",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 955,
+          "layoutY": 160
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 2090,
+          "layoutY": 158
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de Changement statut TOR A",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1818,
+          "layoutY": 157
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Changement statut TOR A",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Dry Contact \"${label}\" (${deviceName}) - Changement statut TOR A",
+          "bodyTemplate": "Bonjour,\n\nLe Dry Contact  \"${label}\" (${deviceName}) signale un changement de statut sur le TOR A.  Le Dry Contact se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 2091,
+          "layoutY": 642
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de signal faible",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1821,
+          "layoutY": 647
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Signal faible",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Dry Contact \"${label}\" (${deviceName}) - Signal faible",
+          "bodyTemplate": "Bonjour,\n\nLa qualité du signal du Dry Contact \"${label}\" (${deviceName}) est faible. Le Dry Contact se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 2089,
+          "layoutY": 562
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de batterie faible",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1821,
+          "layoutY": 566
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Batterie faible",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Dry Contact \"${label}\" (${deviceName}) - Batterie faible",
+          "bodyTemplate": "Bonjour,\n\nLe niveau de batterie du Dry Contact \"${label}\" (${deviceName}) est faible. Le Dry Contact se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 9,
+          "layoutY": 350
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Import previous data",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "zoneName"
+          ],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 8,
+          "layoutY": 259
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetOriginatorFieldsNode",
+        "name": "Import deviceName & label",
+        "debugMode": true,
+        "configuration": {
+          "fieldsMapping": {
+            "name": "deviceName",
+            "label": "label"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 577,
+          "layoutY": 478
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Capteur inactif",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.declenchements = prevDetails.declenchements + 1;\n} else {\n    details.declenchements = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Capteur inactif",
+          "severity": "MAJOR",
+          "propagate": true,
+          "relationTypes": []
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 14,
+          "layoutY": 441
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Check Alarms",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextNodes(metadata, msg) {\n    var results = []; // tableau des noms des prochains noeuds\n   \n    if(msgType === \"POST_TELEMETRY_REQUEST\") {\n        if (msg.channelAAlert === true) {\n            results.push('channelAAlert');\n        }\n        if (msg.channelBAlert === true) {\n            results.push('channelBAlert');\n        }\n        if (msg.channelCAlert === true) {\n            results.push('channelCAlert');\n        }\n        if (msg.channelDAlert === true) {\n            results.push('channelDAlert');\n        }\n    }\n    if (msg.lowBattery === true) {\n        results.push('Batterie faible');\n    }\n    if (msg.signalValue === \"Mauvais\") {\n        results.push('Signal faible');\n    }\n    if (msg.indicator === \"OFF\") {\n        results.push('Capteur inactif');\n    }\n    return results;\n}\n\nreturn nextNodes(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1240,
+          "layoutY": 654
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1239,
+          "layoutY": 562
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1241,
+          "layoutY": 479
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Split \"zoneName\"",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.zoneName = metadata.ss_zoneName.slice(0, metadata.ss_zoneName.indexOf(\"~\") - 1);\nmetadata.siteName = metadata.ss_zoneName.slice(metadata.ss_zoneName.indexOf(\"~\") +2);\n\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1518,
+          "layoutY": 480
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to String",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1516,
+          "layoutY": 559
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to String",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1516,
+          "layoutY": 649
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Convert emailList array to String",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata.emailList = JSON.parse(metadata.emailList).join();\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 960,
+          "layoutY": 481
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 958,
+          "layoutY": 569
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 958,
+          "layoutY": 650
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetRelatedAttributeNode",
+        "name": "Get asset info",
+        "debugMode": true,
+        "configuration": {
+          "relationsQuery": {
+            "fetchLastLevelOnly": true,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          },
+          "telemetry": false,
+          "attrMapping": {
+            "emailList": "emailList",
+            "assetAddress": "assetAddress"
+          }
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 2095,
+          "layoutY": 479
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Mail de capteur inactif",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1823,
+          "layoutY": 478
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Capteur inactif",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "sarp.connect@veolia.com",
+          "toTemplate": "${emailList}",
+          "ccTemplate": null,
+          "bccTemplate": null,
+          "subjectTemplate": "Alarme du Dry Contact \"${label}\" (${deviceName}) - Quadrapus inactif",
+          "bodyTemplate": "Bonjour,\n\nLe Dry Contact  \"${label}\" (${deviceName}) est inactif depuis 3 jours.  Le Dry Contact se trouve dans la zone \"${zoneName}\" du chantier \"${siteName}\" situé à l'adresse ${assetAddress}.\n\nLien vers la plateforme : https://thingsboard-dev.sarpnet.fr"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 575,
+          "layoutY": 644
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Signal faible",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.declenchements = prevDetails.declenchements + 1;\n} else {\n    details.declenchements = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Signal faible",
+          "severity": "CRITICAL",
+          "propagate": true,
+          "relationTypes": []
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 576,
+          "layoutY": 567
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateAlarmNode",
+        "name": "Batterie faible",
+        "debugMode": true,
+        "configuration": {
+          "alarmDetailsBuildJs": "var details = {};\n\nif (metadata.prevAlarmDetails) {\n    var prevDetails = JSON.parse(metadata.prevAlarmDetails);\n    details.declenchements = prevDetails.declenchements + 1;\n} else {\n    details.declenchements = 1;\n}\nreturn details;",
+          "useMessageAlarmData": false,
+          "alarmType": "Batterie faible",
+          "severity": "CRITICAL",
+          "propagate": true,
+          "relationTypes": []
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 3,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 0,
+        "toIndex": 3,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 5,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "toIndex": 9,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 6,
+        "toIndex": 9,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 8,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 11,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 7,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 10,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 12,
+        "toIndex": 15,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 12,
+        "toIndex": 15,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 13,
+        "toIndex": 14,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 14,
+        "toIndex": 17,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 15,
+        "toIndex": 13,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 17,
+        "toIndex": 16,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 18,
+        "toIndex": 21,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 18,
+        "toIndex": 21,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 19,
+        "toIndex": 20,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 20,
+        "toIndex": 23,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 21,
+        "toIndex": 19,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 23,
+        "toIndex": 22,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 25,
+        "toIndex": 24,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 27,
+        "toIndex": 26,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 28,
+        "toIndex": 31,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 29,
+        "toIndex": 28,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 30,
+        "toIndex": 38,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 30,
+        "toIndex": 38,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 31,
+        "toIndex": 0,
+        "type": "channelDAlert"
+      },
+      {
+        "fromIndex": 31,
+        "toIndex": 6,
+        "type": "channelCAlert"
+      },
+      {
+        "fromIndex": 31,
+        "toIndex": 12,
+        "type": "channelBAlert"
+      },
+      {
+        "fromIndex": 31,
+        "toIndex": 18,
+        "type": "channelAAlert"
+      },
+      {
+        "fromIndex": 31,
+        "toIndex": 30,
+        "type": "Capteur inactif"
+      },
+      {
+        "fromIndex": 31,
+        "toIndex": 44,
+        "type": "Batterie faible"
+      },
+      {
+        "fromIndex": 31,
+        "toIndex": 43,
+        "type": "Signal faible"
+      },
+      {
+        "fromIndex": 32,
+        "toIndex": 37,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 33,
+        "toIndex": 36,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 34,
+        "toIndex": 35,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 35,
+        "toIndex": 42,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 36,
+        "toIndex": 27,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 37,
+        "toIndex": 25,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 38,
+        "toIndex": 34,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 39,
+        "toIndex": 33,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 40,
+        "toIndex": 32,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 42,
+        "toIndex": 41,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 43,
+        "toIndex": 40,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 43,
+        "toIndex": 40,
+        "type": "Created"
+      },
+      {
+        "fromIndex": 44,
+        "toIndex": 39,
+        "type": "Updated"
+      },
+      {
+        "fromIndex": 44,
+        "toIndex": 39,
+        "type": "Created"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

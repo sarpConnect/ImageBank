@@ -1,0 +1,315 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "ROOT",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": true,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 1,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 859,
+          "layoutY": 1068
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save new position in telemetry",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "Process incoming messages from devices with the alarm rules defined in the device profile. Dispatch all incoming messages with \"Success\" relation type.",
+          "layoutX": 204,
+          "layoutY": 240
+        },
+        "type": "org.thingsboard.rule.engine.profile.TbDeviceProfileNode",
+        "name": "Device Profile Node",
+        "debugMode": false,
+        "configuration": {
+          "persistAlarmRulesState": false,
+          "fetchAlarmRulesStateOnStart": false
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 217,
+          "layoutY": 395
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Check msgType & deviceType",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextRelation(metadata, msg) {\n    var results = [];\n    if(metadata.deviceType !== undefined && metadata.deviceType === \"Diagbox\"){\n        results.push(\"Diagbox\");\n    } else if(metadata.deviceType !== undefined && metadata.deviceType === \"Gateway\"){\n        results.push(\"Gateway (DT)\");\n    } else if(msg.deviceType === \"Quadrapus\"){\n        results.push(\"Quadrapus\");\n    } else if(metadata.deviceType !== undefined && metadata.deviceType === \"Dry Contact Divers\"){\n        results.push(\"Dry Contact Divers\");\n    } else if(metadata.deviceType !== undefined && metadata.deviceType === \"Dry Contact\"){\n        results.push(\"Dry Contact\");\n    } else if(metadata.deviceType !== undefined && metadata.deviceType === \"Ekomille\"){\n        results.push(\"Dry Contact\");\n    } else if(metadata.deviceType !== undefined && metadata.deviceType === \"RD Box\"){\n        results.push(\"Dry Contact\");\n    } else if(metadata.deviceType !== undefined && metadata.deviceType === \"Snapbox\"){\n        results.push(\"Dry Contact\");\n    } else if(metadata.deviceType !== undefined && metadata.deviceType === \"Delta P\"){\n        results.push(\"Delta P\");\n    } else if(metadata.deviceType !== undefined && metadata.deviceType === \"Motion\"){\n        results.push(\"Motion\");\n    } else if(metadata.deviceType !== undefined && metadata.deviceType === \"Kapflex\"){\n        results.push(\"Kapflex\");\n    } else if(metadata.deviceType !== undefined && metadata.deviceType === \"Kapflex - Sonde de boues\"){\n        results.push(\"Kapflex - Sonde de boues\");\n    } else if(metadata.deviceType !== undefined && metadata.deviceType === \"touch\"){\n        results.push(\"Touch\");\n    } else if(metadata.deviceType !== undefined && metadata.deviceType === \"Thermomètre\"){\n        results.push(\"Thermomètre\");\n    } else if(msg.xPos !== undefined && msg.yPos !== undefined && msg.imageURL !== undefined) {\n        results.push(\"Changing position on map & imageURL\");\n    } else if(msg.xPos !== undefined && msg.yPos !== undefined) {\n        results.push(\"Changing position on map\");\n    } else if(msg.imageURL !== undefined) {\n        results.push(\"Changing imageURL\");\n    }\n    return results;\n}\nreturn nextRelation(metadata, msg);\n\n// function nextRelation(metadata, msg) {\n//     var results = [];\n//     if(typeof metadata.deviceType !== undefined) {\n//         switch (metadata.deviceType) {\n//             case 'Diagbox':\n//                 results.push('Diagbox');\n//                 break;\n//             case 'Gateway':\n//                 results.push('Gateway');\n//                 break;\n//             case 'Dry Contact':\n//                 results.push('Dry Contact');\n//                 break;\n//             case 'Ekomille':\n//                 results.push('Ekomille');\n//                 break;\n//             case 'RD Box':\n//                 results.push('RD Box');\n//                 break;\n//             case 'Snapbox':\n//                 results.push('Snapbox');\n//                 break;\n//             case 'Delta P':\n//                 results.push('Delta P');\n//                 break;\n//             case 'Motion':\n//                 results.push('Motion');\n//                 break;\n//             case 'touch':\n//                 results.push('Touch');\n//                 break;\n//             case 'Kapflex':\n//                 results.push('Kapflex');\n//                 break;\n//             case 'thermostat':\n//                 results.push('Thermostat');\n//                 break;\n//             default:\n//                 return;\n//         }\n//     } else if(typeof msg.xPos !== undefined && typeof msg.yPos !== undefined) {\n//         results.push('Changing position on map');\n//     }\n//     return results;\n// }\n// return nextRelation(metadata, msg);"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 581,
+          "layoutY": 1067
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Change msg & msgType",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    xPos: msg.xPos,\n    yPos: msg.yPos\n};\n\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 864,
+          "layoutY": 1213
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save new imageURL in telemetry",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 582,
+          "layoutY": 1211
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Change msg & msgType",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    imageURL: msg.imageURL\n};\n\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 860,
+          "layoutY": 931
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Save new position in telemetry",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 0
+        }
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 582,
+          "layoutY": 930
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Change msg & msgType",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg = {\n    xPos: msg.xPos,\n    yPos: msg.yPos,\n    imageURL: msg.imageURL\n};\n\nreturn {msg: newMsg, metadata: metadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 1,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 7,
+        "type": "Changing position on map & imageURL"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 5,
+        "type": "Changing imageURL"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 3,
+        "type": "Changing position on map"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 0,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 6,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": [
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "c01cbc00-31ab-11ec-876a-cf762a600ce5"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 589,
+          "layoutY": 3,
+          "ruleChainNodeId": "rule-chain-node-20"
+        },
+        "type": "Dry Contact Divers"
+      },
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "b0bd30f0-2ff3-11ec-876a-cf762a600ce5"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 590,
+          "layoutY": 622,
+          "ruleChainNodeId": "rule-chain-node-19"
+        },
+        "type": "Kapflex - Sonde de boues"
+      },
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "83ad2880-679a-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 577,
+          "layoutY": 471,
+          "ruleChainNodeId": "rule-chain-node-18"
+        },
+        "type": "Kapflex"
+      },
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "aa769590-66c9-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 582,
+          "layoutY": 207,
+          "ruleChainNodeId": "rule-chain-node-17"
+        },
+        "type": "Diagbox"
+      },
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "af92b110-0e24-11eb-bc46-3366d0c0af8a"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 582,
+          "layoutY": 291,
+          "ruleChainNodeId": "rule-chain-node-16"
+        },
+        "type": "Gateway (DT)"
+      },
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "7311dcc0-06e5-11eb-9c35-c9bf9dfc9a1f"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 577,
+          "layoutY": 386,
+          "ruleChainNodeId": "rule-chain-node-15"
+        },
+        "type": "Dry Contact"
+      },
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "7998eef0-60f2-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 590,
+          "layoutY": 122,
+          "ruleChainNodeId": "rule-chain-node-14"
+        },
+        "type": "Motion"
+      },
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "799ffcc0-8d45-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 586,
+          "layoutY": 694,
+          "ruleChainNodeId": "rule-chain-node-13"
+        },
+        "type": "Touch"
+      },
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "7b2fd9b0-9165-11eb-a1a2-a5c3e205bd9c"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 582,
+          "layoutY": 814,
+          "ruleChainNodeId": "rule-chain-node-12"
+        },
+        "type": "Thermomètre"
+      },
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "ad41dbd0-c395-11eb-a14d-6762c2669fd8"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 591,
+          "layoutY": 61,
+          "ruleChainNodeId": "rule-chain-node-11"
+        },
+        "type": "Quadrapus"
+      },
+      {
+        "fromIndex": 2,
+        "targetRuleChainId": {
+          "entityType": "RULE_CHAIN",
+          "id": "6b748870-1704-11ec-876a-cf762a600ce5"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 590,
+          "layoutY": 562,
+          "ruleChainNodeId": "rule-chain-node-10"
+        },
+        "type": "Delta P"
+      }
+    ]
+  }
+}
