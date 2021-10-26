@@ -1,0 +1,166 @@
+{
+  "widget": {
+    "isSystemType": true,
+    "bundleAlias": "entity_admin_widgets",
+    "typeAlias": "asset_admin_table",
+    "type": "latest",
+    "title": "New widget",
+    "image": null,
+    "description": null,
+    "sizeX": 7.5,
+    "sizeY": 6.5,
+    "config": {
+      "timewindow": {
+        "realtime": {
+          "interval": 1000,
+          "timewindowMs": 86400000
+        },
+        "aggregation": {
+          "type": "NONE",
+          "limit": 200
+        }
+      },
+      "showTitle": true,
+      "backgroundColor": "rgb(255, 255, 255)",
+      "color": "rgba(0,96,168,0.87)",
+      "padding": "4px",
+      "settings": {
+        "enableSearch": true,
+        "displayPagination": true,
+        "defaultPageSize": 10,
+        "displayEntityName": false,
+        "displayEntityType": false,
+        "entitiesTitle": "Liste des zones",
+        "enableSelectColumnDisplay": false,
+        "enableStickyHeader": true,
+        "enableStickyAction": true,
+        "defaultSortOrder": "assetId"
+      },
+      "title": "Liste des zones",
+      "dropShadow": true,
+      "enableFullscreen": false,
+      "titleStyle": {
+        "fontSize": "16px",
+        "fontWeight": 400,
+        "padding": "5px 10px 5px 10px"
+      },
+      "useDashboardTimewindow": false,
+      "showLegend": false,
+      "datasources": [
+        {
+          "type": "entity",
+          "name": null,
+          "entityAliasId": "20c6f8bc-f5a7-3620-7b74-f0936c79bbc6",
+          "filterId": null,
+          "dataKeys": [
+            {
+              "name": "name",
+              "type": "entityField",
+              "label": "Nom",
+              "color": "#2196f3",
+              "settings": {
+                "columnWidth": "0px",
+                "useCellStyleFunction": false,
+                "cellStyleFunction": "",
+                "useCellContentFunction": false,
+                "cellContentFunction": "",
+                "defaultColumnVisibility": "visible",
+                "columnSelectionToDisplay": "enabled",
+                "columnExportOption": "onlyVisible"
+              },
+              "_hash": 0.009064542569040768
+            },
+            {
+              "name": "assetId",
+              "type": "attribute",
+              "label": "assetId",
+              "color": "#4caf50",
+              "settings": {
+                "columnWidth": "0px",
+                "useCellStyleFunction": false,
+                "cellStyleFunction": "",
+                "useCellContentFunction": false,
+                "defaultColumnVisibility": "hidden",
+                "columnSelectionToDisplay": "enabled",
+                "columnExportOption": "onlyVisible",
+                "cellContentFunction": "return;"
+              },
+              "_hash": 0.4332981731043981,
+              "units": null,
+              "decimals": null,
+              "funcBody": null,
+              "usePostProcessing": null,
+              "postFuncBody": null
+            }
+          ]
+        }
+      ],
+      "showTitleIcon": false,
+      "titleIcon": "more_horiz",
+      "iconColor": "rgba(0, 0, 0, 0.87)",
+      "iconSize": "24px",
+      "titleTooltip": "",
+      "widgetStyle": {},
+      "displayTimewindow": true,
+      "actions": {
+        "headerButton": [],
+        "actionCellButton": [
+          {
+            "name": "Supprimer la zone",
+            "icon": "delete",
+            "type": "customPretty",
+            "customHtml": "<form #editEntityForm=\"ngForm\" *ngIf= \"editEntityFormGroup\" [formGroup]=\"editEntityFormGroup\"\r\n      (ngSubmit)=\"save()\"  class=\"edit-entity-form\">\r\n    <mat-toolbar fxLayout=\"row\" color=\"primary\">\r\n        <h2>Supprimer la zone {{entityName}}</h2>\r\n        <span fxFlex></span>\r\n        <button mat-icon-button (click)=\"cancel()\" type=\"button\">\r\n            <mat-icon class=\"material-icons\">close</mat-icon>\r\n        </button>\r\n    </mat-toolbar>\r\n    <mat-progress-bar color=\"warn\" mode=\"indeterminate\" *ngIf=\"isLoading$ | async\">\r\n    </mat-progress-bar>\r\n    <div style=\"height: 4px;\" *ngIf=\"!(isLoading$ | async)\"></div>\r\n    <div mat-dialog-content>\r\n        <div class=\"mat-padding\" fxLayout=\"column\">\r\n            <span>Voulez-vous vraiment supprimer la zone {{ entityName }} ?</span> \r\n        </div>\r\n        <div class=\"mat-padding\" fxLayout=\"column\" *ngIf=\"relatedDevicesInfo.length > 0\">\r\n          <span>Les capteurs suivants seront déplacés vers le stock et remis à zéro :</span>\r\n          <ul>\r\n            <li ngDefaultControl *ngFor=\"let relatedDevice of relatedDevicesInfo\">\r\n                <span>{{ relatedDevice.name }}</span>\r\n            </li>\r\n          </ul>\r\n        </div>\r\n    </div>\r\n    <div mat-dialog-actions fxLayout=\"row\" fxLayoutAlign=\"end center\">\r\n        <button mat-button mat-raised-button color=\"primary\"\r\n                type=\"submit\"\r\n                [disabled]=\"(isLoading$ | async)\">\r\n            Supprimer\r\n        </button>\r\n        <button mat-button color=\"primary\"\r\n                style=\"margin-right: 20px;\"\r\n                type=\"button\"\r\n                [disabled]=\"(isLoading$ | async)\"\r\n                (click)=\"cancel()\" cdkFocusInitial>\r\n            Annuler\r\n        </button>\r\n    </div>\r\n</form>",
+            "customCss": "/*=======================================================================*/\n/*==========  There are two examples: for edit and add entity  ==========*/\n/*=======================================================================*/\n/*========================  Edit entity example  ========================*/\n/*=======================================================================*/\n/*\n.edit-entity-form .boolean-value-input {\n    padding-left: 5px;\n}\n\n.edit-entity-form .boolean-value-input .checkbox-label {\n    margin-bottom: 8px;\n    color: rgba(0,0,0,0.54);\n    font-size: 12px;\n}\n\n.relations-list .header {\n    padding-right: 5px;\n    padding-bottom: 5px;\n    padding-left: 5px;\n}\n\n.relations-list .header .cell {\n    padding-right: 5px;\n    padding-left: 5px;\n    font-size: 12px;\n    font-weight: 700;\n    color: rgba(0, 0, 0, .54);\n    white-space: nowrap;\n}\n\n.relations-list .mat-form-field-infix {\n    width: auto !important;\n}\n\n.relations-list .body {\n    padding-right: 5px;\n    padding-bottom: 15px;\n    padding-left: 5px;\n}\n\n.relations-list .body .row {\n    padding-top: 5px;\n}\n\n.relations-list .body .cell {\n    padding-right: 5px;\n    padding-left: 5px;\n}\n\n.relations-list .body .md-button {\n    margin: 0;\n}\n*/\n/*========================================================================*/\n/*=========================  Add entity example  =========================*/\n/*========================================================================*/\n/*\n.add-entity-form .boolean-value-input {\n    padding-left: 5px;\n}\n\n.add-entity-form .boolean-value-input .checkbox-label {\n    margin-bottom: 8px;\n    color: rgba(0,0,0,0.54);\n    font-size: 12px;\n}\n\n.relations-list .header {\n    padding-right: 5px;\n    padding-bottom: 5px;\n    padding-left: 5px;\n}\n\n.relations-list .header .cell {\n    padding-right: 5px;\n    padding-left: 5px;\n    font-size: 12px;\n    font-weight: 700;\n    color: rgba(0, 0, 0, .54);\n    white-space: nowrap;\n}\n\n.relations-list .mat-form-field-infix {\n    width: auto !important;\n}\n\n.relations-list .body {\n    padding-right: 5px;\n    padding-bottom: 15px;\n    padding-left: 5px;\n}\n\n.relations-list .body .row {\n    padding-top: 5px;\n}\n\n.relations-list .body .cell {\n    padding-right: 5px;\n    padding-left: 5px;\n}\n\n.relations-list .body .md-button {\n    margin: 0;\n}\n*/\n",
+            "customFunction": "let $injector = widgetContext.$scope.$injector;\r\nlet customDialog = $injector.get(widgetContext.servicesMap.get('customDialog'));\r\nlet entityService = $injector.get(widgetContext.servicesMap.get('entityService'));\r\nlet assetService = $injector.get(widgetContext.servicesMap.get('assetService'));\r\nlet deviceService = $injector.get(widgetContext.servicesMap.get('deviceService'));\r\nlet attributeService = $injector.get(widgetContext.servicesMap.get('attributeService'));\r\nlet roleService = $injector.get(widgetContext.servicesMap.get('roleService'));\r\nlet entityRelationService = $injector.get(widgetContext.servicesMap.get('entityRelationService'));\r\nlet entityGroupService = $injector.get(widgetContext.servicesMap.get('entityGroupService'));\r\nlet userService = $injector.get(widgetContext.servicesMap.get('userService'));\r\n\r\nconst currentUser = widgetContext.currentUser;\r\nconst currentOwnerInfo = getCurrentOwnerInfo();\r\n\r\n// La classe Entity permettra de créer l'objet \"t\" utilisé dans les requêtes de recherche d'entités\r\nclass PageLink {\r\n  \r\n    constructor(pageSize, page, textSearch, sortOrder) {\r\n      this.textSearch = textSearch;\r\n      this.pageSize = pageSize;\r\n      this.page = page;\r\n      this.sortOrder = sortOrder;\r\n    }\r\n  \r\n    nextPageLink() {\r\n      return new PageLink(this.pageSize, this.page + 1, this.textSearch, this.sortOrder);\r\n    }\r\n  \r\n    toQuery() {\r\n      let query = `?pageSize=${this.pageSize}&page=${this.page}`;\r\n      if (this.textSearch && this.textSearch.length) {\r\n        query += `&textSearch=${this.textSearch}`;\r\n      }\r\n      if (this.sortOrder) {\r\n        query += `&sortProperty=${this.sortOrder.property}&sortOrder=${this.sortOrder.direction}`;\r\n      }\r\n      return query;\r\n    }\r\n}\r\n\r\n// ************************************* INITIALISATION *************************************\r\n\r\nopenEditEntityDialog();\r\n\r\nfunction openEditEntityDialog() {\r\n    customDialog.customDialog(htmlTemplate, EditEntityDialogController).subscribe();\r\n}\r\n\r\n// ************************************* LOGGED IN USER INFO *************************************\r\n\r\nfunction getCurrentOwnerInfo(){\r\n    let currentOwnerInfo = { \"type\": \"CUSTOMER\", \"id\": currentUser.customerId};\r\n    if(currentUser.authority === \"TENANT_ADMIN\"){\r\n        currentOwnerInfo = { \"type\": \"TENANT\", \"id\": currentUser.tenantId };\r\n    }\r\n    return currentOwnerInfo;\r\n}\r\n\r\n// ************************************* GET ENTITYGROUPS *************************************\r\n\r\nfunction EditEntityDialogController(instance) {\r\n    let vm = instance;\r\n\r\n    vm.entityName = entityName;\r\n    vm.entityType = entityId.entityType;\r\n    vm.relatedDevicesInfo = [];\r\n\r\n    vm.editEntityFormGroup = vm.fb.group({\r\n        entityName: ['', [vm.validators.required]],\r\n        entityType: ['', [vm.validators.required]],\r\n        relatedDevicesInfo: vm.fb.array([])\r\n    });\r\n\r\n    getEntityInfo();\r\n\r\n    vm.cancel = function() {\r\n        vm.dialogRef.close(null);\r\n    };\r\n\r\n    function getEntityInfo() {\r\n        const t = new PageLink(10000, 0, null, null);\r\n        const currentOwnerId = currentOwnerInfo.id;\r\n        let tasks = [\r\n            entityService.getEntity(entityId.entityType, entityId.id),\r\n            entityRelationService.findByFromAndType(entityId, \"Contains\")\r\n        ];\r\n        if(currentOwnerInfo.type === \"TENANT\") {\r\n            tasks.push(\r\n                deviceService.getTenantDevices(t),\r\n                assetService.getTenantAssets(t)\r\n            );\r\n        } else if(currentOwnerInfo.type === \"CUSTOMER\") {\r\n            tasks.push(\r\n                deviceService.getCustomerDevices(currentOwnerId, t),\r\n                assetService.getCustomerAssets(currentOwnerId, t)\r\n            );\r\n        }\r\n        widgetContext.rxjs.forkJoin(tasks)\r\n            .subscribe((results) => {\r\n                const zoneInfo = results[0];\r\n                const relatedDevicesIds = results[1].map(deviceRelation => { return deviceRelation.to.id});\r\n                const allDevicesList = results[2].data;\r\n                const allAssetsList = results[3].data;\r\n\r\n                const relatedDevicesInfo = findRelatedEntitiesInfo(allDevicesList, relatedDevicesIds);\r\n                findDevicesOldRelations(relatedDevicesInfo);\r\n                \r\n                const stockInfo = allAssetsList.find(asset => asset.type === \"Stock\" && asset.ownerId.id === zoneInfo.ownerId.id);\r\n                \r\n                vm.relatedDevicesInfo = relatedDevicesInfo;\r\n                vm.stockInfo = stockInfo;\r\n\r\n                vm.editEntityFormGroup.patchValue({\r\n                    entityName: vm.entityName,\r\n                    entityType: vm.entityType,\r\n                    relatedDevicesInfo: vm.relatedDevicesInfo\r\n                }, {emitEvent: false});\r\n\r\n            });\r\n    }\r\n\r\n    function findRelatedEntitiesInfo(entityList, relatedEntitiesIds) {\r\n        let results = [];\r\n        entityList.forEach(entity => {\r\n            if(relatedEntitiesIds.includes(entity.id.id)) {\r\n                results.push(entity);\r\n            }\r\n        });\r\n        return results;\r\n    }\r\n\r\n    function findDevicesOldRelations(relatedDevicesInfo) {\r\n        relatedDevicesInfo.forEach(relatedDevice => {\r\n            entityRelationService.findInfoByTo(relatedDevice.id)\r\n                .subscribe((results) => {\r\n                    relatedDevice.relationsInfo = results;\r\n                });\r\n        });\r\n\r\n    }\r\n\r\n    // ************************************* MANAGE DEVICES RELATIONS *************************************\r\n\r\n    function deleteDevicesOldRelations(relatedDevicesInfo) {\r\n        let tasks = [];\r\n        relatedDevicesInfo.forEach(relatedDevice => {\r\n            if(relatedDevice.relationsInfo.length > 0) {\r\n                relatedDevice.relationsInfo.forEach(relation => {\r\n                    tasks.push(entityRelationService.deleteRelation(relation.from, relation.type, relation.to));\r\n                });\r\n            }\r\n        });\r\n        if (tasks.length > 0) {\r\n            return widgetContext.rxjs.forkJoin(tasks);\r\n        } else {\r\n            return widgetContext.rxjs.of([]);\r\n        }\r\n    }\r\n\r\n    function addDevicesNewRelations(relatedDevicesInfo) {\r\n        let tasks = [];\r\n        const stockInfo = vm.stockInfo;\r\n        relatedDevicesInfo.forEach(relatedDevice => {\r\n            const newRelationWithStock = {\r\n                \"from\": {\r\n                    \"entityType\": stockInfo.id.entityType,\r\n                    \"id\": stockInfo.id.id\r\n                },\r\n                \"to\": {\r\n                    \"entityType\": relatedDevice.id.entityType,\r\n                    \"id\": relatedDevice.id.id\r\n                },\r\n                \"type\": \"Contains\",\r\n                \"typeGroup\": \"COMMON\"\r\n            };\r\n            const newDeviceAttributes = [\r\n                { key: \"zoneName\", value: stockInfo.name },\r\n            ];\r\n            tasks.push(\r\n                entityRelationService.saveRelation(newRelationWithStock),\r\n                attributeService.saveEntityAttributes(relatedDevice.id, \"SERVER_SCOPE\", newDeviceAttributes)\r\n            );\r\n        });\r\n        if (tasks.length > 0) {\r\n            return widgetContext.rxjs.forkJoin(tasks);\r\n        } else {\r\n            return widgetContext.rxjs.of([]);\r\n        }\r\n    }\r\n\r\n    // ************************************* MANAGE DEVICES TELEMETRY AND ATTRIBUTES *************************************\r\n\r\n    function createTelemetryReset(deviceType) {\r\n        let telemetryReset = [];\r\n        const now = new Date().valueOf();\r\n        if (deviceType === \"Diagbox\") {\r\n            telemetryReset = [\r\n                {key: 'total', value: 0},\r\n                {key: 'totalGroupe', value: 0},\r\n                {key: 'maintenance', value: 0},\r\n                {key: 'matin', value: 0},\r\n                {key: 'apresmidi', value: 0},\r\n                {key: 'soir', value: 0},\r\n                {key: 'nuit', value: 0}\r\n            ];\r\n        } else if (deviceType === \"Ekomille\" || deviceType === \"RD Box\" || deviceType === \"Snapbox\" || deviceType === \"Dry Contact\") {\r\n            telemetryReset = [\r\n                {key: 'compteurA', value: 0},\r\n                {key: 'compteurB', value: 0},\r\n                {key: 'compteurC', value: 0},\r\n                {key: 'compteurD', value: 0},\r\n                {key: 'compteurReservoir', value: 0},\r\n                {key: 'compteurGroupe', value: 0},\r\n                {key: 'matin', value: 0},\r\n                {key: 'apresmidi', value: 0},\r\n                {key: 'soir', value: 0},\r\n                {key: 'nuit', value: 0}\r\n            ];\r\n        } else if (deviceType === \"Delta P\") {\r\n            telemetryReset = [\r\n                {key: 'pressureValue', value: 0},\r\n                {key: 'pressureUnit', value: \"pa\"},\r\n                {key: 'voltageValue', value: 0},\r\n                {key: 'voltageUnit', value: \"mV\"},\r\n                {key: 'firstLowPressureTs', value: now},\r\n                {key: 'firstZeroVoltageTs', value: now},\r\n                {key: 'pressureBreakdown', value: false},\r\n                {key: 'voltageBreakdown', value: false}\r\n            ];\r\n        } else if (deviceType === \"Motion\") {\r\n            telemetryReset = [\r\n                {key: 'total', value: 0},\r\n                {key: 'totalGroupe', value: 0},\r\n                {key: 'maintenance', value: 0},\r\n                {key: 'matin', value: 0},\r\n                {key: 'apresmidi', value: 0},\r\n                {key: 'soir', value: 0},\r\n                {key: 'nuit', value: 0}\r\n            ];\r\n        } else if (deviceType === \"Kapflex\") {\r\n            telemetryReset = [\r\n                {key: 'hydroCarbonHeight', value: 0},\r\n                {key: 'temperature', value: 0},\r\n            ];\r\n        }\r\n        return telemetryReset;\r\n    }\r\n    \r\n    function resetDevicesTelemetry(relatedDevicesInfo) {\r\n        let tasks = [];\r\n        relatedDevicesInfo.forEach(relatedDevice => {\r\n            const telemetryReset = createTelemetryReset(relatedDevice.type);\r\n            tasks.push(attributeService.saveEntityTimeseries(relatedDevice.id, \"telemetry\", telemetryReset));\r\n        });\r\n        if (tasks.length > 0) {\r\n            return widgetContext.rxjs.forkJoin(tasks);\r\n        } else {\r\n            return widgetContext.rxjs.of([]);\r\n        }\r\n    }\r\n\r\n    function changeDevicesMode(relatedDevicesInfo) {\r\n        let tasks = [];\r\n        relatedDevicesInfo.forEach(relatedDevice => {\r\n            const attributesArray = [{key: \"mode\", value: \"MAINTENANCE\"}];\r\n            tasks.push(attributeService.saveEntityAttributes(relatedDevice.id, \"SERVER_SCOPE\", attributesArray));\r\n        });\r\n        if (tasks.length > 0) {\r\n            return widgetContext.rxjs.forkJoin(tasks);\r\n        } else {\r\n            return widgetContext.rxjs.of([]);\r\n        }\r\n    }\r\n\r\n    // ************************************* MANAGE DEVICES ALARMS *************************************\r\n\r\n    function resetDevicesAlarms(relatedDevicesInfo) {\r\n        let tasks = [];\r\n        const accessToken = getAccessToken();\r\n        const config = { headers: { 'X-Authorization': `Bearer ${accessToken}`} };\r\n        relatedDevicesInfo.forEach(async function (relatedDevice) {\r\n            const alarmList = await getDeviceAlarms(relatedDevice, config);\r\n            alarmList.forEach(alarm => {\r\n                const deleteAlarmURL = `https://thingsboard-dev.sarpnet.fr/api/alarm/${alarm.id.id}`;\r\n                const deleteAlarmTask = new Promise(resolve => { axios.delete(deleteAlarmURL, config )});\r\n                tasks.push(deleteAlarmTask);\r\n            });\r\n        });\r\n        if (tasks.length > 0) {\r\n            return widgetContext.rxjs.forkJoin(tasks);\r\n        } else {\r\n            return widgetContext.rxjs.of([]);\r\n        }\r\n    }\r\n\r\n    function getAccessToken(){\r\n        return localStorage.getItem('jwt_token');\r\n    }\r\n    \r\n    function getDeviceAlarms(relatedDevice, config) {\r\n        const getDeviceAlarmsURL = `https://thingsboard-dev.sarpnet.fr/api/alarm/${relatedDevice.id.entityType}/${relatedDevice.id.id}?pageSize=10000&page=0`;\r\n        return new Promise(resolve => { resolve(axios.get(getDeviceAlarmsURL, config).then(result => { return result.data.data } )) });\r\n    }\r\n\r\n    // ************************************* DELETE ZONE  *************************************\r\n\r\n    function deleteZone(assetId) {\r\n        return assetService.deleteAsset(assetId.id);\r\n    }\r\n    \r\n    function end(){\r\n        vm.editEntityFormGroup.markAsPristine();\r\n        widgetContext.updateAliases();\r\n        vm.dialogRef.close(null);\r\n    }\r\n\r\n    // ************************************* SAVE *************************************\r\n\r\n    vm.save = function() {\r\n        vm.editEntityFormGroup.markAsPristine();\r\n        const relatedDevicesInfo = vm.relatedDevicesInfo;\r\n        const zoneId = entityId;\r\n        widgetContext.rxjs.forkJoin([\r\n            deleteDevicesOldRelations(relatedDevicesInfo),\r\n            resetDevicesTelemetry(relatedDevicesInfo),\r\n            resetDevicesAlarms(relatedDevicesInfo),\r\n            changeDevicesMode(relatedDevicesInfo)\r\n        ]).subscribe((results) => {\r\n            widgetContext.rxjs.forkJoin([\r\n                addDevicesNewRelations(relatedDevicesInfo),\r\n                deleteZone(zoneId)\r\n            ]).subscribe((results) => { end() });\r\n        });\r\n    }\r\n}",
+            "customResources": [
+              {
+                "url": "https://unpkg.com/axios@0.21.4/dist/axios.min.js"
+              }
+            ],
+            "id": "ec2708f6-9ff0-186b-e4fc-7635ebfa3074"
+          },
+          {
+            "name": "Modifier la zone",
+            "icon": "edit",
+            "type": "customPretty",
+            "customHtml": "<form #editEntityForm=\"ngForm\" [formGroup]=\"editEntityFormGroup\"\r\n      (ngSubmit)=\"save()\"  class=\"edit-entity-form\">\r\n    <mat-toolbar fxLayout=\"row\" color=\"primary\">\r\n        <h2>Modifier nom de la zone \"{{entityName}}\"</h2>\r\n        <span fxFlex></span>\r\n        <button mat-icon-button (click)=\"cancel()\" type=\"button\">\r\n            <mat-icon class=\"material-icons\">close</mat-icon>\r\n        </button>\r\n    </mat-toolbar>\r\n    <mat-progress-bar color=\"warn\" mode=\"indeterminate\" *ngIf=\"isLoading$ | async\">\r\n    </mat-progress-bar>\r\n    <div style=\"height: 4px;\" *ngIf=\"!(isLoading$ | async)\"></div>\r\n    <div mat-dialog-content fxLayout=\"column\">\r\n        <div fxLayout=\"row\" fxLayoutGap=\"8px\" fxLayout.xs=\"column\"  fxLayoutGap.xs=\"0\">\r\n            <mat-form-field fxFlex class=\"mat-block\">\r\n                <mat-label>Nom du chantier</mat-label>\r\n                <input matInput formControlName=\"zoneName\" required>\r\n                <mat-error *ngIf=\"editEntityFormGroup.get('zoneName').hasError('required')\">\r\n                    Le nouveau nom de la zone est requis.\r\n                </mat-error>\r\n                <mat-error *ngIf=\"editEntityFormGroup.get('zoneName').hasError('pattern')\">\r\n                    Le nouveau nom de la zone contient au moins un caractère interdit.\r\n                </mat-error>\r\n            </mat-form-field>\r\n            <mat-form-field fxFlex class=\"mat-block\">\r\n                <mat-label>Nom du site</mat-label>\r\n                <input matInput formControlName=\"siteName\" readonly>\r\n            </mat-form-field>\r\n        </div>\r\n    </div>\r\n    <div mat-dialog-actions fxLayout=\"row\" fxLayoutAlign=\"end center\">\r\n        <button mat-button mat-raised-button color=\"primary\"\r\n                type=\"submit\"\r\n                [disabled]=\"(isLoading$ | async) || editEntityFormGroup.invalid || !editEntityFormGroup.dirty\">\r\n            Sauvegarder\r\n        </button>\r\n        <button mat-button color=\"primary\"\r\n                style=\"margin-right: 20px;\"\r\n                type=\"button\"\r\n                [disabled]=\"(isLoading$ | async)\"\r\n                (click)=\"cancel()\" cdkFocusInitial>\r\n            Annuler\r\n        </button>\r\n    </div>\r\n</form>",
+            "customCss": "/*=======================================================================*/\n/*==========  There are two examples: for edit and add entity  ==========*/\n/*=======================================================================*/\n/*========================  Edit entity example  ========================*/\n/*=======================================================================*/\n/*\n.edit-entity-form .boolean-value-input {\n    padding-left: 5px;\n}\n\n.edit-entity-form .boolean-value-input .checkbox-label {\n    margin-bottom: 8px;\n    color: rgba(0,0,0,0.54);\n    font-size: 12px;\n}\n\n.relations-list .header {\n    padding-right: 5px;\n    padding-bottom: 5px;\n    padding-left: 5px;\n}\n\n.relations-list .header .cell {\n    padding-right: 5px;\n    padding-left: 5px;\n    font-size: 12px;\n    font-weight: 700;\n    color: rgba(0, 0, 0, .54);\n    white-space: nowrap;\n}\n\n.relations-list .mat-form-field-infix {\n    width: auto !important;\n}\n\n.relations-list .body {\n    padding-right: 5px;\n    padding-bottom: 15px;\n    padding-left: 5px;\n}\n\n.relations-list .body .row {\n    padding-top: 5px;\n}\n\n.relations-list .body .cell {\n    padding-right: 5px;\n    padding-left: 5px;\n}\n\n.relations-list .body .md-button {\n    margin: 0;\n}\n*/\n/*========================================================================*/\n/*=========================  Add entity example  =========================*/\n/*========================================================================*/\n/*\n.add-entity-form .boolean-value-input {\n    padding-left: 5px;\n}\n\n.add-entity-form .boolean-value-input .checkbox-label {\n    margin-bottom: 8px;\n    color: rgba(0,0,0,0.54);\n    font-size: 12px;\n}\n\n.relations-list .header {\n    padding-right: 5px;\n    padding-bottom: 5px;\n    padding-left: 5px;\n}\n\n.relations-list .header .cell {\n    padding-right: 5px;\n    padding-left: 5px;\n    font-size: 12px;\n    font-weight: 700;\n    color: rgba(0, 0, 0, .54);\n    white-space: nowrap;\n}\n\n.relations-list .mat-form-field-infix {\n    width: auto !important;\n}\n\n.relations-list .body {\n    padding-right: 5px;\n    padding-bottom: 15px;\n    padding-left: 5px;\n}\n\n.relations-list .body .row {\n    padding-top: 5px;\n}\n\n.relations-list .body .cell {\n    padding-right: 5px;\n    padding-left: 5px;\n}\n\n.relations-list .body .md-button {\n    margin: 0;\n}\n*/\n",
+            "customFunction": "let $injector = widgetContext.$scope.$injector;\r\nlet customDialog = $injector.get(widgetContext.servicesMap.get('customDialog'));\r\nlet entityService = $injector.get(widgetContext.servicesMap.get('entityService'));\r\nlet assetService = $injector.get(widgetContext.servicesMap.get('assetService'));\r\nlet deviceService = $injector.get(widgetContext.servicesMap.get('deviceService'));\r\nlet attributeService = $injector.get(widgetContext.servicesMap.get('attributeService'));\r\nlet entityRelationService = $injector.get(widgetContext.servicesMap.get('entityRelationService'));\r\n\r\nopenEditEntityDialog();\r\n\r\nfunction openEditEntityDialog() {\r\n    customDialog.customDialog(htmlTemplate, EditEntityDialogController).subscribe();\r\n}\r\n\r\nfunction EditEntityDialogController(instance) {\r\n    let vm = instance;\r\n\r\n    vm.entityName = entityName;\r\n    vm.zoneName = entityName.slice(0, entityName.indexOf(\"~\") - 1);\r\n    vm.siteName = entityName.slice(entityName.indexOf(\"~\"));\r\n    vm.entityType = entityId.entityType;\r\n\r\n    vm.editEntityFormGroup = vm.fb.group({\r\n        entityName: ['', [vm.validators.required]],\r\n        zoneName: ['', [vm.validators.required, vm.validators.pattern(/^[a-zA-ZÀ-ÿ0-9-.,' ]*$/)]],\r\n        siteName: ['', [vm.validators.required]],\r\n        entityType: [null],\r\n        type: ['', [vm.validators.required]]\r\n    });\r\n\r\n    getEntityInfo();\r\n    \r\n    vm.cancel = function() {\r\n        vm.dialogRef.close(null);\r\n    };\r\n\r\n    vm.save = function() {\r\n        vm.editEntityFormGroup.markAsPristine();\r\n        widgetContext.rxjs.forkJoin([\r\n            saveEntity()\r\n        ]).subscribe(\r\n            function () {\r\n                widgetContext.updateAliases();\r\n                vm.dialogRef.close(null);\r\n            }\r\n        );\r\n    };\r\n\r\n    function getEntityInfo() {\r\n        entityService.getEntity(entityId.entityType, entityId.id).subscribe(function (entity) {\r\n            vm.entity = entity;\r\n                vm.editEntityFormGroup.patchValue({\r\n                    entityName: vm.entity.name,\r\n                    zoneName: vm.zoneName,\r\n                    siteName: vm.siteName,\r\n                    entityType: vm.entityType,\r\n                    type: vm.entity.type\r\n                }, {emitEvent: false});\r\n        });\r\n    }\r\n\r\n    function saveEntity() {\r\n        const formValues = vm.editEntityFormGroup.value;\r\n        if (vm.zoneName !== formValues.zoneName){\r\n            vm.entity.name = formValues.zoneName + \" \" + formValues.siteName;\r\n            return assetService.saveAsset(vm.entity);\r\n        } else {\r\n            return widgetContext.rxjs.of([]);\r\n        }\r\n    }\r\n}",
+            "customResources": [
+              {
+                "url": "https://unpkg.com/axios@0.21.4/dist/axios.min.js"
+              }
+            ],
+            "id": "9c184eb7-ed56-685d-8ac3-198a1dfb824b"
+          }
+        ]
+      },
+      "enableDataExport": false
+    },
+    "row": 0,
+    "col": 0,
+    "id": "66ebc3e8-6127-92fe-de85-9105e2ded6d8"
+  },
+  "aliasesInfo": {
+    "datasourceAliases": {
+      "0": {
+        "alias": "Zones",
+        "filter": {
+          "type": "assetType",
+          "resolveMultiple": true,
+          "assetType": "Zone",
+          "assetNameFilter": ""
+        }
+      }
+    },
+    "targetDeviceAliases": {}
+  },
+  "filtersInfo": {
+    "datasourceFilters": {}
+  },
+  "originalSize": {
+    "sizeX": 6,
+    "sizeY": 10
+  },
+  "originalColumns": 24
+}

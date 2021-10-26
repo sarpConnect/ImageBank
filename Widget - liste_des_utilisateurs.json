@@ -1,0 +1,173 @@
+{
+  "widget": {
+    "isSystemType": true,
+    "bundleAlias": "entity_admin_widgets",
+    "typeAlias": "asset_admin_table",
+    "type": "latest",
+    "title": "New widget",
+    "image": null,
+    "description": null,
+    "sizeX": 7.5,
+    "sizeY": 6.5,
+    "config": {
+      "timewindow": {
+        "realtime": {
+          "interval": 1000,
+          "timewindowMs": 86400000
+        },
+        "aggregation": {
+          "type": "NONE",
+          "limit": 200
+        }
+      },
+      "showTitle": true,
+      "backgroundColor": "rgb(255, 255, 255)",
+      "color": "rgba(0,96,168,0.87)",
+      "padding": "4px",
+      "settings": {
+        "enableSearch": true,
+        "displayPagination": true,
+        "defaultPageSize": 10,
+        "defaultSortOrder": "email",
+        "displayEntityName": false,
+        "displayEntityType": false,
+        "entitiesTitle": "Liste des utilisateurs",
+        "enableSelectColumnDisplay": false,
+        "enableStickyHeader": true,
+        "enableStickyAction": true
+      },
+      "title": "Liste des utilisateurs",
+      "dropShadow": true,
+      "enableFullscreen": false,
+      "titleStyle": {
+        "fontSize": "16px",
+        "fontWeight": 400,
+        "padding": "5px 10px 5px 10px"
+      },
+      "useDashboardTimewindow": false,
+      "showLegend": false,
+      "datasources": [
+        {
+          "type": "entity",
+          "name": null,
+          "entityAliasId": "14ec37fe-6e6d-dd8f-944a-42477b16b7ca",
+          "filterId": null,
+          "dataKeys": [
+            {
+              "name": "email",
+              "type": "entityField",
+              "label": "Email",
+              "color": "#2196f3",
+              "settings": {
+                "columnWidth": "0px",
+                "useCellStyleFunction": false,
+                "cellStyleFunction": "",
+                "useCellContentFunction": false,
+                "cellContentFunction": "",
+                "defaultColumnVisibility": "visible",
+                "columnSelectionToDisplay": "enabled",
+                "columnExportOption": "onlyVisible"
+              },
+              "_hash": 0.5486869796872957
+            },
+            {
+              "name": "firstName",
+              "type": "entityField",
+              "label": "Prénom",
+              "color": "#4caf50",
+              "settings": {
+                "columnWidth": "0px",
+                "useCellStyleFunction": false,
+                "cellStyleFunction": "",
+                "useCellContentFunction": false,
+                "cellContentFunction": "",
+                "defaultColumnVisibility": "visible",
+                "columnSelectionToDisplay": "enabled",
+                "columnExportOption": "onlyVisible"
+              },
+              "_hash": 0.23641117598818195
+            },
+            {
+              "name": "lastName",
+              "type": "entityField",
+              "label": "Nom de famille",
+              "color": "#f44336",
+              "settings": {
+                "columnWidth": "0px",
+                "useCellStyleFunction": false,
+                "cellStyleFunction": "",
+                "useCellContentFunction": false,
+                "cellContentFunction": "",
+                "defaultColumnVisibility": "visible",
+                "columnSelectionToDisplay": "enabled",
+                "columnExportOption": "onlyVisible"
+              },
+              "_hash": 0.9443346566049251
+            }
+          ]
+        }
+      ],
+      "showTitleIcon": false,
+      "titleIcon": "more_horiz",
+      "iconColor": "rgba(0, 0, 0, 0.87)",
+      "iconSize": "24px",
+      "titleTooltip": "",
+      "widgetStyle": {},
+      "displayTimewindow": true,
+      "actions": {
+        "headerButton": [],
+        "actionCellButton": [
+          {
+            "name": "Supprimer l'utilisateur",
+            "icon": "delete",
+            "type": "custom",
+            "customFunction": "let $injector = widgetContext.$scope.$injector;\r\nlet dialogs = $injector.get(widgetContext.servicesMap.get('dialogs'));\r\nlet assetService = $injector.get(widgetContext.servicesMap.get('assetService'));\r\nlet deviceService = $injector.get(widgetContext.servicesMap.get('deviceService'));\r\nlet userService = $injector.get(widgetContext.servicesMap.get('userService'));\r\n\r\nopenDeleteEntityDialog();\r\n\r\nfunction openDeleteEntityDialog() {\r\n    let title = 'Supprimer l\\'utilisateur ' +\r\n                entityName;\r\n    let content = 'Voulez-vous vraiment supprimer l\\'utilisateur ' + entityName + ' ?';\r\n    dialogs.confirm(title, content, 'Annuler', 'Supprimer').subscribe(\r\n        function(result) {\r\n            if (result) {\r\n                deleteEntity();\r\n            }\r\n        }\r\n    );\r\n}\r\n\r\nfunction deleteEntity() {\r\n    deleteEntityObservable(entityId).subscribe(\r\n        function success() {\r\n            widgetContext.updateAliases();\r\n        },\r\n        function fail() {\r\n            showErrorDialog();\r\n        }\r\n    );\r\n}\r\n\r\nfunction deleteEntityObservable(entityId) {\r\n    return userService.deleteUser(entityId.id);\r\n}\r\n\r\nfunction showErrorDialog() {\r\n    let title = 'Erreur';\r\n    let content = 'Une erreur est survenue lors de la suppression de l\\'utilisateur. Veuillez réessayer.';\r\n    dialogs.alert(title, content, 'CLOSE').subscribe(\r\n        function(result) {}\r\n    );\r\n}",
+            "id": "ec2708f6-9ff0-186b-e4fc-7635ebfa3074"
+          },
+          {
+            "name": "Modifier l'utilisateur",
+            "icon": "edit",
+            "type": "customPretty",
+            "customHtml": "<form #editEntityForm=\"ngForm\" [formGroup]=\"editEntityFormGroup\"\r\n      (ngSubmit)=\"save()\"  class=\"edit-entity-form\" style=\"width: 480px;\">\r\n    <mat-toolbar fxLayout=\"row\" color=\"primary\">\r\n        <h2>Modifier l'utilisateur {{entityName}}</h2>\r\n        <span fxFlex></span>\r\n        <button mat-icon-button (click)=\"cancel()\" type=\"button\">\r\n            <mat-icon class=\"material-icons\">close</mat-icon>\r\n        </button>\r\n    </mat-toolbar>\r\n    <mat-progress-bar color=\"warn\" mode=\"indeterminate\" *ngIf=\"isLoading$ | async\">\r\n    </mat-progress-bar>\r\n    <div style=\"height: 4px;\" *ngIf=\"!(isLoading$ | async)\"></div>\r\n    <div mat-dialog-content fxLayout=\"column\">\r\n        <mat-form-field class=\"mat-block\">\r\n            <mat-label>Email de l'utilisateur</mat-label>\r\n            <input matInput formControlName=\"email\" required readonly>\r\n        </mat-form-field>\r\n        <mat-form-field class=\"mat-block\">\r\n            <mat-label>Nom de l'utilisateur</mat-label>\r\n            <input matInput formControlName=\"lastName\" required [readonly]=\"!isWritableUser\">\r\n            <mat-error *ngIf=\"editEntityFormGroup.get('lastName').hasError('required')\">\r\n                  Le nom est requis.\r\n            </mat-error>\r\n        </mat-form-field>\r\n        <mat-form-field class=\"mat-block\">\r\n            <mat-label>Prénom de l'utilisateur</mat-label>\r\n            <input matInput formControlName=\"firstName\" required [readonly]=\"!isWritableUser\">\r\n            <mat-error *ngIf=\"editEntityFormGroup.get('firstName').hasError('required')\">\r\n                  Le prénom est requis.\r\n            </mat-error>\r\n        </mat-form-field>\r\n        <div formGroupName=\"attributes\" fxLayout=\"column\">\r\n          <mat-form-field class=\"mat-block\">\r\n            <mat-label>Numéro de téléphone de l'utilisateur</mat-label>\r\n            <input matInput formControlName=\"Téléphone\" type=\"tel\" [readonly]=\"!isWritableUser\">\r\n          </mat-form-field>\r\n        </div>\r\n        <mat-form-field>\r\n            <mat-label>Groupes d'utilisateurs</mat-label>\r\n            <mat-select formControlName=\"userGroupsForUser\" multiple [disabled]=\"(isLoading$ | async) || !isWritableUser || isMyself\">\r\n                <mat-option *ngFor=\"let userGroup of userGroupsList\" [value]=\"userGroup\">{{userGroup.name}}</mat-option>\r\n            </mat-select>\r\n            <mat-error *ngIf=\"editEntityFormGroup.get('userGroupsForUser').hasError('required')\">\r\n                Veuillez sélectionner au moins un groupe de clients.\r\n            </mat-error>\r\n        </mat-form-field>\r\n        <button mat-button mat-raised-button color=\"primary\"\r\n            style=\"width: 100%; margin-top: 20px;\"\r\n            type=\"button\"\r\n            [disabled]=\"(isLoading$ | async) || isAlreadyActive || !isWritableUser\"\r\n            (click)=\"sendActivationEmail()\" cdkFocusInitial>\r\n            Renvoyer l'email d'activation\r\n        </button>\r\n    </div>\r\n    <div mat-dialog-actions fxLayout=\"row\" fxLayoutAlign=\"end center\">\r\n        <button mat-button mat-raised-button color=\"primary\"\r\n          type=\"submit\"\r\n          [disabled]=\"(isLoading$ | async) || editEntityFormGroup.invalid || !editEntityFormGroup.dirty || !isWritableUser\">\r\n        Modifier\r\n        </button>\r\n        <button mat-button color=\"primary\"\r\n                style=\"margin-right: 20px;\"\r\n                type=\"button\"\r\n                [disabled]=\"(isLoading$ | async)\"\r\n                (click)=\"cancel()\" cdkFocusInitial>\r\n          Annuler\r\n        </button>\r\n    </div>\r\n</form>",
+            "customCss": "/*=======================================================================*/\n/*==========  There are two examples: for edit and add entity  ==========*/\n/*=======================================================================*/\n/*========================  Edit entity example  ========================*/\n/*=======================================================================*/\n/*\n.edit-entity-form .boolean-value-input {\n    padding-left: 5px;\n}\n\n.edit-entity-form .boolean-value-input .checkbox-label {\n    margin-bottom: 8px;\n    color: rgba(0,0,0,0.54);\n    font-size: 12px;\n}\n\n.relations-list .header {\n    padding-right: 5px;\n    padding-bottom: 5px;\n    padding-left: 5px;\n}\n\n.relations-list .header .cell {\n    padding-right: 5px;\n    padding-left: 5px;\n    font-size: 12px;\n    font-weight: 700;\n    color: rgba(0, 0, 0, .54);\n    white-space: nowrap;\n}\n\n.relations-list .mat-form-field-infix {\n    width: auto !important;\n}\n\n.relations-list .body {\n    padding-right: 5px;\n    padding-bottom: 15px;\n    padding-left: 5px;\n}\n\n.relations-list .body .row {\n    padding-top: 5px;\n}\n\n.relations-list .body .cell {\n    padding-right: 5px;\n    padding-left: 5px;\n}\n\n.relations-list .body .md-button {\n    margin: 0;\n}\n*/\n/*========================================================================*/\n/*=========================  Add entity example  =========================*/\n/*========================================================================*/\n/*\n.add-entity-form .boolean-value-input {\n    padding-left: 5px;\n}\n\n.add-entity-form .boolean-value-input .checkbox-label {\n    margin-bottom: 8px;\n    color: rgba(0,0,0,0.54);\n    font-size: 12px;\n}\n\n.relations-list .header {\n    padding-right: 5px;\n    padding-bottom: 5px;\n    padding-left: 5px;\n}\n\n.relations-list .header .cell {\n    padding-right: 5px;\n    padding-left: 5px;\n    font-size: 12px;\n    font-weight: 700;\n    color: rgba(0, 0, 0, .54);\n    white-space: nowrap;\n}\n\n.relations-list .mat-form-field-infix {\n    width: auto !important;\n}\n\n.relations-list .body {\n    padding-right: 5px;\n    padding-bottom: 15px;\n    padding-left: 5px;\n}\n\n.relations-list .body .row {\n    padding-top: 5px;\n}\n\n.relations-list .body .cell {\n    padding-right: 5px;\n    padding-left: 5px;\n}\n\n.relations-list .body .md-button {\n    margin: 0;\n}\n*/\n",
+            "customFunction": "let $injector = widgetContext.$scope.$injector;\r\nlet customDialog = $injector.get(widgetContext.servicesMap.get('customDialog'));\r\nlet entityService = $injector.get(widgetContext.servicesMap.get('entityService'));\r\nlet assetService = $injector.get(widgetContext.servicesMap.get('assetService'));\r\nlet deviceService = $injector.get(widgetContext.servicesMap.get('deviceService'));\r\nlet attributeService = $injector.get(widgetContext.servicesMap.get('attributeService'));\r\nlet entityRelationService = $injector.get(widgetContext.servicesMap.get('entityRelationService'));\r\nlet userService = $injector.get(widgetContext.servicesMap.get('userService'));\r\nlet entityGroupService = $injector.get(widgetContext.servicesMap.get('entityGroupService'));\r\n\r\n\r\nconst currentUser = widgetContext.currentUser;\r\nconst currentOwnerInfo = getCurrentOwnerInfo();\r\n\r\nclass PageLink {\r\n  \r\n    constructor(pageSize, page, textSearch, sortOrder) {\r\n      this.textSearch = textSearch;\r\n      this.pageSize = pageSize;\r\n      this.page = page;\r\n      this.sortOrder = sortOrder;\r\n    }\r\n  \r\n    nextPageLink() {\r\n      return new PageLink(this.pageSize, this.page + 1, this.textSearch, this.sortOrder);\r\n    }\r\n  \r\n    toQuery() {\r\n      let query = `?pageSize=${this.pageSize}&page=${this.page}`;\r\n      if (this.textSearch && this.textSearch.length) {\r\n        query += `&textSearch=${this.textSearch}`;\r\n      }\r\n      if (this.sortOrder) {\r\n        query += `&sortProperty=${this.sortOrder.property}&sortOrder=${this.sortOrder.direction}`;\r\n      }\r\n      return query;\r\n    }\r\n}\r\n\r\n// ************************************* INITIALISATION *************************************\r\n\r\nopenEditEntityDialog();\r\n\r\nfunction openEditEntityDialog() {\r\n    customDialog.customDialog(htmlTemplate, EditEntityDialogController).subscribe();\r\n}\r\n\r\n// ************************************* LOGGED IN USER INFO *************************************\r\nfunction getCurrentOwnerInfo(){\r\n    let currentOwnerInfo = { \"type\": \"CUSTOMER\", \"id\": currentUser.customerId};\r\n    if(currentUser.authority === \"TENANT_ADMIN\"){\r\n        currentOwnerInfo = { \"type\": \"TENANT\", \"id\": currentUser.tenantId };\r\n    }\r\n    return currentOwnerInfo;\r\n}\r\n\r\n// ************************************* SELECTED USER INFO *************************************\r\n\r\nfunction EditEntityDialogController(instance) {\r\n    let vm = instance;\r\n\r\n    vm.entityName = entityName;\r\n    vm.entityType = entityId.entityType;\r\n    vm.entity = {};\r\n\r\n    vm.attributes = [];\r\n    vm.relationsInfo = [];\r\n    vm.isWritableUser = false;\r\n    vm.isMyself = false;\r\n    vm.isAlreadyActive = false;\r\n    vm.userGroupsList = [];\r\n    vm.userGroupsForUser = [];\r\n\r\n    vm.editEntityFormGroup = vm.fb.group({\r\n        email: ['', [vm.validators.required]],\r\n        lastName: ['', [vm.validators.required]],\r\n        firstName: ['', [vm.validators.required]],\r\n        Téléphone: [''],\r\n        userGroupsList: ['', [vm.validators.required]],\r\n        userGroupsForUser: [{value: '', disabled: true}, [vm.validators.required]],\r\n        isWritableUser: ['', [vm.validators.required]],\r\n        isMyself: ['', [vm.validators.required]],\r\n        isAlreadyActive: ['', [vm.validators.required]],\r\n        attributes: vm.fb.group({\r\n            \"Date de création\": [null],\r\n            \"Date d'expiration\": [null],\r\n            \"Téléphone\": [null]\r\n        })\r\n    });\r\n\r\n    getEntityInfo();\r\n\r\n    vm.cancel = function() {\r\n        vm.dialogRef.close(null);\r\n    };\r\n\r\n    function getEntityAttributes(attributes) {\r\n        for (var i = 0; i < attributes.length; i++) {\r\n            vm.attributes[attributes[i].key] = attributes[i].value;\r\n        }\r\n    } \r\n\r\n    function getUserGroupsForUser(userGroupsList, userGroupsForUser) {\r\n        let results = [];\r\n        const userGroupsIdsForUser = userGroupsForUser.map(userGroup => { return userGroup.id });\r\n        userGroupsList.forEach(userGroup => {\r\n            if(userGroupsIdsForUser.includes(userGroup.id.id) && userGroup.groupAll === false) {\r\n                results.push(userGroup);\r\n            }\r\n        });\r\n        return results;\r\n    }\r\n\r\n    function checkIfWritableUser(userGroupsForUser) {\r\n        let isWritable = false;\r\n        const currentUserEmail = currentUser.sub;\r\n        const selectedUserEmail = vm.entity.email;\r\n        const userGroupsNames = userGroupsForUser.map(userGroup => { return userGroup.name });\r\n        const noClientsGroups = userGroupsNames.filter(userGroupName => userGroupName.slice(0, 7) !== \"Clients\");\r\n        if(noClientsGroups.length === 0 || currentUserEmail === selectedUserEmail) {\r\n            isWritable = true;\r\n        }\r\n        return isWritable;\r\n    }\r\n\r\n    function checkIfMyself() {\r\n        let isMyself = false;\r\n        const currentUserEmail = currentUser.sub;\r\n        const selectedUserEmail = vm.entity.email;\r\n        if(currentUserEmail === selectedUserEmail) {\r\n            isMyself = true;\r\n        }\r\n        return isMyself;\r\n    }\r\n\r\n    function getClientsUserGroups(userGroupsList) {\r\n        let results = [];\r\n        userGroupsList.forEach(userGroup => {\r\n            if(userGroup.name.slice(0, 7) === \"Clients\") {\r\n                attributeService.getEntityAttributes(userGroup.id, \"SERVER_SCOPE\", [\"assetId\"])\r\n                    .subscribe(results => {\r\n                        userGroup.assetId = results[0].value;\r\n                });\r\n                results.push(userGroup);\r\n            }\r\n        });\r\n        return results;\r\n    }\r\n\r\n    function checkIfAlreadyActive(user) {\r\n        let result = false;\r\n        if(user.additionalInfo.lastLoginTs !== undefined) {\r\n            result = true;\r\n        }\r\n        return result;\r\n    }\r\n\r\n    function getEntityInfo() {\r\n        entityService.getEntity(entityId.entityType, entityId.id)\r\n            .subscribe((result) => {\r\n                vm.entity = result;\r\n                widgetContext.rxjs.forkJoin([\r\n                    attributeService.getEntityAttributes(entityId, 'SERVER_SCOPE'),\r\n                    entityGroupService.getEntityGroupsByOwnerId(currentOwnerInfo.type, currentOwnerInfo.id, \"USER\"),\r\n                    entityGroupService.getEntityGroupIdsForEntityId(\"USER\", entityId.id),\r\n                    entityRelationService.findByToAndType(entityId, \"Manages\")\r\n                ]).subscribe((results) => {\r\n                    const user = vm.entity;\r\n                    getEntityAttributes(results[0]);\r\n                    const userGroupsList = results[1];\r\n                    const clientsUserGroups = getClientsUserGroups(userGroupsList);\r\n                    const userGroupsForUserResults = results[2];\r\n                    const relationsInfo = results[3];\r\n                    const userGroupsForUser = getUserGroupsForUser(userGroupsList, userGroupsForUserResults);\r\n                    const isWritableUser = checkIfWritableUser(userGroupsForUser);\r\n                    const isMyself = checkIfMyself();\r\n                    const isAlreadyActive = checkIfAlreadyActive(user);\r\n    \r\n                    vm.relationsInfo = relationsInfo;\r\n                    vm.isWritableUser = isWritableUser;\r\n                    vm.isMyself = isMyself;\r\n                    vm.userGroupsList = clientsUserGroups;\r\n                    vm.userGroupsForUser = userGroupsForUser;\r\n                    vm.isAlreadyActive = isAlreadyActive;\r\n                    vm.editEntityFormGroup.patchValue({\r\n                        email: vm.entity.email,\r\n                        lastName: vm.entity.lastName,\r\n                        firstName: vm.entity.firstName,\r\n                        Téléphone: vm.attributes['Téléphone'],\r\n                        userGroupsList: vm.userGroupsList,\r\n                        userGroupsForUser: vm.userGroupsForUser,\r\n                        isWritableUser: vm.isWritableUser,\r\n                        isMyself: vm.isMyself,\r\n                        isAlreadyActive: vm.isAlreadyActive,\r\n                        attributes: vm.attributes\r\n                    });\r\n                });\r\n            });\r\n    }\r\n\r\n    function editUserFields(user) {\r\n        let tasks = [];\r\n        let isModified = false;\r\n        const newUser = vm.editEntityFormGroup.value;\r\n        const oldUser = vm.entity;\r\n        if(newUser.lastName !== oldUser.lastName) {\r\n            isModified = true;\r\n            user.lastName = newUser.lastName;\r\n        }\r\n        if(newUser.firstName !== oldUser.firstName) {\r\n            isModified = true;\r\n            user.firstName = newUser.firstName;\r\n        }\r\n        if(isModified === true) {\r\n            tasks.push(userService.saveUser(user));\r\n        }\r\n        if(tasks.length > 0) {\r\n            return widgetContext.rxjs.forkJoin(tasks);\r\n        } else {\r\n            return widgetContext.rxjs.of([]);\r\n        }\r\n    }\r\n\r\n    function editUserPhoneNumber(user) {\r\n        let tasks = [];\r\n        const newPhoneNumber = vm.editEntityFormGroup.get('attributes').get('Téléphone').value;\r\n        const oldPhoneNumber = vm.attributes['Téléphone'];\r\n        if(newPhoneNumber !== oldPhoneNumber) {\r\n            const newAttributes = [ {key: \"Téléphone\", value: newPhoneNumber} ];\r\n            tasks.push(attributeService.saveEntityAttributes(user.id, \"SERVER_SCOPE\", newAttributes));\r\n        }\r\n        if(tasks.length > 0) {\r\n            return widgetContext.rxjs.forkJoin(tasks);\r\n        } else {\r\n            return widgetContext.rxjs.of([]);\r\n        }\r\n    }\r\n\r\n    function deleteFromOldUserGroups(user) {\r\n        let tasks = [];\r\n        const relationsInfo = vm.relationsInfo;\r\n        const newUserGroups = vm.editEntityFormGroup.get('userGroupsForUser').value;\r\n        const newUserGroupsIds = newUserGroups.map(userGroup => { return userGroup.id.id });\r\n        const oldUserGroups = vm.userGroupsForUser;\r\n        oldUserGroups.forEach(oldUserGroup => {\r\n            if(!newUserGroupsIds.includes(oldUserGroup.id.id)) {\r\n                const relationToDelete = relationsInfo.find(relation => relation.from.id === oldUserGroup.assetId);\r\n                tasks.push(\r\n                    entityGroupService.removeEntityFromEntityGroup(oldUserGroup.id.id, user.id.id),\r\n                    entityRelationService.deleteRelation(relationToDelete.from, relationToDelete.type, relationToDelete.to)\r\n                );\r\n            }\r\n        });\r\n        if(tasks.length > 0) {\r\n            return widgetContext.rxjs.forkJoin(tasks);\r\n        } else {\r\n            return widgetContext.rxjs.of([]);\r\n        }\r\n    }\r\n\r\n    function addToNewUserGroups(user) {\r\n        let tasks = [];\r\n        const newUserGroups = vm.editEntityFormGroup.get('userGroupsForUser').value;\r\n        const oldUserGroups = vm.userGroupsForUser;\r\n        const oldUserGroupsIds = oldUserGroups.map(userGroup => { return userGroup.id.id });\r\n        newUserGroups.forEach(newUserGroup => {\r\n            if(!oldUserGroupsIds.includes(newUserGroup.id.id)) {\r\n                const newRelation = { \"from\": {\"entityType\": \"ASSET\", \"id\": newUserGroup.assetId}, \"to\": {\"entityType\": \"USER\", \"id\": user.id.id}, \"type\": \"Manages\", \"typeGroup\": \"COMMON\" };\r\n                tasks.push(\r\n                    entityRelationService.saveRelation(newRelation),\r\n                    entityGroupService.addEntityToEntityGroup(newUserGroup.id.id, user.id.id)\r\n                );\r\n            }\r\n        });\r\n        if(tasks.length > 0) {\r\n            return widgetContext.rxjs.forkJoin(tasks);\r\n        } else {\r\n            return widgetContext.rxjs.of([]);\r\n        }\r\n    }\r\n\r\n    function end(){\r\n        vm.editEntityFormGroup.markAsPristine();\r\n        widgetContext.updateAliases();\r\n        vm.dialogRef.close(null);\r\n        // setTimeout(function(){ location.reload(); }, 500);\r\n    }\r\n\r\n    vm.sendActivationEmail = function() {\r\n        const email = vm.entity.email;\r\n        userService.sendActivationEmail(email).subscribe();\r\n    }\r\n\r\n    vm.save = function() {\r\n        vm.editEntityFormGroup.markAsPristine();\r\n        const user = vm.entity;\r\n        widgetContext.rxjs.forkJoin([\r\n            editUserFields(user),\r\n            editUserPhoneNumber(user),\r\n            deleteFromOldUserGroups(user),\r\n            addToNewUserGroups(user)\r\n        ]).subscribe((results) => { end() });\r\n    }\r\n}",
+            "customResources": [
+              {
+                "url": "https://unpkg.com/axios@0.21.4/dist/axios.min.js"
+              }
+            ],
+            "id": "09c88350-9f72-f3d5-6d7c-492c9438a11e"
+          }
+        ]
+      },
+      "enableDataExport": false
+    },
+    "row": 0,
+    "col": 0,
+    "id": "3fb96965-0e62-8092-6d6b-f3c04f9037d0"
+  },
+  "aliasesInfo": {
+    "datasourceAliases": {
+      "0": {
+        "alias": "Utilisateurs de l'utilisateur actuel",
+        "filter": {
+          "type": "entitiesByGroupName",
+          "resolveMultiple": true,
+          "groupStateEntity": false,
+          "stateEntityParamName": null,
+          "groupType": "USER",
+          "entityGroupNameFilter": "All"
+        }
+      }
+    },
+    "targetDeviceAliases": {}
+  },
+  "filtersInfo": {
+    "datasourceFilters": {}
+  },
+  "originalSize": {
+    "sizeX": 6,
+    "sizeY": 10
+  },
+  "originalColumns": 24
+}
